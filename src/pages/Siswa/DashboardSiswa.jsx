@@ -4,6 +4,7 @@ import './DashboardSiswa.css';
 import NavbarSiswa from '../../components/Siswa/NavbarSiswa';
 import CustomAlert from '../../components/Common/CustomAlert';
 import jadwalImage from '../../assets/jadwal.png'; // IMPORT GAMBAR JADWAL
+import QRScanButton from '../../components/Siswa/QRScanButton';
 
 // Sample Data
 const sampleData = {
@@ -885,6 +886,12 @@ const Dashboard = () => {
           onLogout={handleLogoutClick}
           onShowAlert={onShowAlert}
         />
+
+        {/* QR Scan Button - Floating Action Button */}
+        <QRScanButton onSuccess={() => {
+          // Refresh page after successful scan
+          window.location.reload();
+        }} />
       </div>
     </>
   );

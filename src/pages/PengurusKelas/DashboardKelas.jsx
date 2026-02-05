@@ -4,6 +4,7 @@ import './DashboardKelas.css';
 import NavbarPengurus from "../../components/PengurusKelas/NavbarPengurus";
 import CustomAlert from '../../components/Common/CustomAlert';
 import jadwalImage from '../../assets/jadwal.png'; // GANTI PATH INI DENGAN PATH GAMBAR JADWAL ANDA
+import QRGenerateButton from '../../components/PengurusKelas/QRGenerateButton';
 
 // Sample Data
 const sampleData = {
@@ -32,6 +33,12 @@ const sampleData = {
     { month: 'Apr', percentage: 87, hadir: 36, total: 40 },
     { month: 'Mei', percentage: 95, hadir: 39, total: 40 },
     { month: 'Jun', percentage: 90, hadir: 34, total: 40 }
+  ],
+  // Sample schedules for QR generation
+  schedules: [
+    { id: 1, subject_name: 'Matematika', teacher_name: 'Pak Budi', start_time: '07:00', end_time: '08:30' },
+    { id: 2, subject_name: 'Bahasa Indonesia', teacher_name: 'Bu Siti', start_time: '08:30', end_time: '10:00' },
+    { id: 3, subject_name: 'Bahasa Inggris', teacher_name: 'Mr. John', start_time: '10:15', end_time: '11:45' }
   ]
 };
 
@@ -961,6 +968,9 @@ const DashboardKelas = () => {
           onLogout={handleLogoutClick}
           onShowAlert={onShowAlert}
         />
+        
+        {/* QR Generate Button - Floating Action Button */}
+        <QRGenerateButton schedules={sampleData.schedules} />
       </div>
     </>
   );

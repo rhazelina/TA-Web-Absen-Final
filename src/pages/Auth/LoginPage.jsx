@@ -5,7 +5,7 @@ import './LoginPage.css';
 const LoginPage = () => {
   const { role } = useParams();
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     identifier: '',
     password: '',
@@ -15,38 +15,9 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // Data dummy untuk autentikasi
-  const dummyUsers = {
-    'admin': [
-      { username: 'admin', password: 'admin123' }
-    ],
-    'waka': [
-      { kodeGuru: 'WK001', password: 'waka123' },
-      { kodeGuru: 'WK002', password: 'waka123' }
-    ],
-    'peserta-didik': [
-      { nisn: '123' },
-      { nisn: '0012345679' },
-      { nisn: '0012345680' }
-    ],
-    'guru': [
-      { kodeGuru: 'GR001', password: 'guru123' },
-      { kodeGuru: 'GR002', password: 'guru123' },
-      { kodeGuru: 'GR003', password: 'guru123' }
-    ],
-    'wali-kelas': [
-      { kodeGuru: 'WK101', password: 'wakel123' },
-      { kodeGuru: 'WK102', password: 'wakel123' }
-    ],
-    'pengurus-kelas': [
-      { nisn: '123' },
-      { nisn: '0012345682' }
-    ]
-  };
-
   // Konfigurasi untuk setiap role
   const roleConfig = {
-    'admin': { 
+    'admin': {
       title: 'Admin',
       showWelcome: true,
       fields: [
@@ -55,7 +26,7 @@ const LoginPage = () => {
       ],
       dashboard: '/admin/dashboard'
     },
-    'waka': { 
+    'waka': {
       title: 'Waka',
       showWelcome: true,
       fields: [
@@ -64,7 +35,7 @@ const LoginPage = () => {
       ],
       dashboard: '/waka/dashboard'
     },
-    'peserta-didik': { 
+    'peserta-didik': {
       title: 'Peserta Didik',
       showWelcome: true,
       fields: [
@@ -72,7 +43,7 @@ const LoginPage = () => {
       ],
       dashboard: '/siswa/dashboard'
     },
-    'guru': { 
+    'guru': {
       title: 'Guru',
       showWelcome: true,
       fields: [
@@ -81,7 +52,7 @@ const LoginPage = () => {
       ],
       dashboard: '/guru/dashboard'
     },
-    'wali-kelas': { 
+    'wali-kelas': {
       title: 'Wali Kelas',
       showWelcome: true,
       fields: [
@@ -90,7 +61,7 @@ const LoginPage = () => {
       ],
       dashboard: '/walikelas/dashboard'
     },
-    'pengurus-kelas': { 
+    'pengurus-kelas': {
       title: 'Pengurus Kelas',
       showWelcome: true,
       fields: [
@@ -102,58 +73,44 @@ const LoginPage = () => {
 
   const config = roleConfig[role] || roleConfig['admin'];
 
-  // Fungsi validasi login
-  const validateLogin = () => {
-    const users = dummyUsers[role] || [];
-    
-    switch(role) {
-      case 'admin':
-        return users.some(user => 
-          user.username === formData.identifier && 
-          user.password === formData.password
-        );
-      
-      case 'waka':
-      case 'guru':
-      case 'wali-kelas':
-        return users.some(user => 
-          user.kodeGuru === formData.identifier && 
-          user.password === formData.password
-        );
-      
-      case 'peserta-didik':
-      case 'pengurus-kelas':
-        return users.some(user => 
-          user.nisn === formData.identifier
-        );
-      
-      default:
-        return false;
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     const emptyFields = config.fields.filter(field => !formData[field.name]);
     if (emptyFields.length > 0) {
       setError('Mohon isi semua field!');
       return;
     }
 
-    // Validasi kredensial
-    if (validateLogin()) {
-      console.log('Login berhasil sebagai', role, formData);
-      
+    try {
+      // Import auth service dynamically
+      const { authService } = await import('../../services/auth');
+
+      // Call real API login
+      const { user } = await authService.login(
+        formData.identifier,
+        formData.password || '' // For student roles without password
+      );
+
+      console.log('Login berhasil sebagai', role, user);
+
       // Simpan data user ke localStorage
       localStorage.setItem('userRole', role);
       localStorage.setItem('userIdentifier', formData.identifier);
-      
+      localStorage.setItem('userName', user.name);
+
       // Navigate ke dashboard
       navigate(config.dashboard);
-    } else {
-      setError('NISN tidak ditemukan atau data login salah!');
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error.response?.status === 422) {
+        setError('Username/password salah atau akun tidak aktif!');
+      } else if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('Terjadi kesalahan saat login. Silakan coba lagi.');
+      }
     }
   };
 
@@ -162,7 +119,7 @@ const LoginPage = () => {
   };
 
   const handleInputChange = (fieldName, value) => {
-    setFormData({...formData, [fieldName]: value});
+    setFormData({ ...formData, [fieldName]: value });
     setError('');
   };
 
@@ -197,7 +154,7 @@ const LoginPage = () => {
             <div key={index} className="form-group">
               <label className="form-label">{field.label}</label>
               <div className="input-wrapper">
-                <input 
+                <input
                   type={field.type === 'password' && showPassword ? 'text' : field.type}
                   placeholder={field.placeholder}
                   value={formData[field.name]}
@@ -207,7 +164,7 @@ const LoginPage = () => {
                 />
                 {/* Toggle password visibility hanya untuk field password */}
                 {field.type === 'password' && (
-                  <button 
+                  <button
                     type="button"
                     onClick={togglePasswordVisibility}
                     className="password-toggle"
@@ -216,14 +173,14 @@ const LoginPage = () => {
                     {showPassword ? (
                       // Eye slash icon (hide)
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                        <line x1="1" y1="1" x2="23" y2="23"/>
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
                       </svg>
                     ) : (
                       // Eye icon (show)
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
                       </svg>
                     )}
                   </button>
@@ -231,12 +188,12 @@ const LoginPage = () => {
               </div>
             </div>
           ))}
-          
+
           <div className="button-group">
             <button type="button" onClick={handleBack} className="back-button">
               Kembali
             </button>
-            
+
             <button type="submit" className="login-button">
               Masuk
             </button>
