@@ -1,0 +1,735 @@
+/* DashboardWakel.css */
+
+/* ===================================
+   GLOBAL & RESET
+=================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===================================
+   PAGE CONTAINER
+=================================== */
+.wakel-dashboard-page {
+  min-height: 100vh;
+  background-color: var(--bg-body);
+  background-image: url('../../assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  position: relative;
+  padding-top: 80px;
+  overflow-x: hidden;
+}
+
+/* DECORATIVE CIRCLES */
+.wakel-circle-decoration {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.wakel-circle-left-bottom {
+  width: 320px;
+  height: 320px;
+  left: -140px;
+  bottom: -140px;
+}
+
+.wakel-circle-right-top {
+  width: 280px;
+  height: 280px;
+  right: -100px;
+  top: -100px;
+}
+
+/* ===================================
+   MAIN LAYOUT CONTAINER
+=================================== */
+.wakel-dashboard-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  min-height: calc(100vh - 80px);
+}
+
+/* ===================================
+   LEFT SECTION - PROFILE SIDEBAR
+=================================== */
+.wakel-profile-section {
+  position: fixed;
+  left: 0;
+  top: 75px;
+  width: 280px;
+  height: calc(100vh - 75px);
+  background: var(--bg-sidebar);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 40px 20px 30px;
+  text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 900;
+  overflow-y: auto;
+  transition: transform var(--transition-normal);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.wakel-profile-section.closed {
+  transform: translateX(-100%);
+}
+
+.wakel-profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.wakel-profile-avatar-wrapper {
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+
+.wakel-profile-avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 6px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-lg);
+}
+
+.wakel-profile-avatar svg {
+  width: 80px;
+  height: 80px;
+  color: var(--primary);
+}
+
+.wakel-profile-info {
+  width: 100%;
+  margin-bottom: auto;
+}
+
+.wakel-profile-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: white;
+}
+
+.wakel-profile-nip {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  margin: 0;
+}
+
+/* LOGOUT BUTTON */
+.wakel-btn-logout {
+  width: 100%;
+  padding: 12px 20px;
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all var(--transition-fast);
+  margin-top: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.wakel-btn-logout:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.wakel-btn-logout svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ===================================
+   RIGHT SECTION - MAIN CONTENT
+=================================== */
+.wakel-right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  margin-left: 280px;
+  /* Match sidebar */
+  padding: var(--spacing-xl);
+  transition: margin-left var(--transition-normal);
+  max-width: 1600px;
+}
+
+.wakel-right-section.full-width {
+  margin-left: 0;
+}
+
+/* HEADER SECTION - Kehadiran Siswa */
+.wakel-header-section {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.wakel-header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-lg) 0;
+  color: var(--text-primary);
+}
+
+/* TOP CARDS GRID */
+.wakel-top-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* DATE TIME CARD */
+.wakel-datetime-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.wakel-datetime-icon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  color: var(--primary);
+  background: var(--light);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wakel-datetime-content {
+  flex: 1;
+}
+
+.wakel-datetime-label {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.wakel-datetime-value {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+/* STATS CARD */
+.wakel-stats-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform var(--transition-fast);
+}
+
+.wakel-stats-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.wakel-stats-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 8px;
+  color: var(--primary);
+}
+
+.wakel-stats-label {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.wakel-stats-value {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+/* TIME RANGE CARD */
+.wakel-time-range-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  grid-column: span 1;
+  /* changed from span 3 */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.wakel-time-input {
+  background: var(--bg-body);
+  border: 1px solid var(--text-secondary);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.wakel-time-input:focus {
+  border-color: var(--primary);
+  background: white;
+}
+
+.wakel-time-separator {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* JADWAL SECTION */
+.wakel-jadwal-section {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.wakel-jadwal-title {
+  font-size: 1.5rem;
+  text-align: left;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-lg) 0;
+  color: var(--text-primary);
+}
+
+/* SCHEDULE LIST */
+.wakel-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.wakel-schedule-item {
+  background: var(--bg-body);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  transition: transform var(--transition-fast);
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.wakel-schedule-item:hover {
+  background: white;
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.wakel-schedule-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3);
+}
+
+.wakel-schedule-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.wakel-schedule-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.wakel-schedule-subject {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.wakel-schedule-details {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.wakel-schedule-action {
+  background: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-radius: 50%;
+  background: white;
+  border: 1px solid var(--text-secondary);
+}
+
+.wakel-schedule-action:hover {
+  background: var(--light);
+  transform: scale(1.1);
+  border-color: var(--primary);
+}
+
+.wakel-action-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+}
+
+.wakel-action-icon.eye-icon {
+  color: var(--text-primary);
+}
+
+/* EMPTY STATE */
+.wakel-empty-schedule {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
+.wakel-empty-schedule svg {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* ===================================
+   MODAL STYLES
+=================================== */
+
+/* Modal Overlay */
+.wakel-modal-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Popup Detail Jadwal - New Design */
+.wakel-modal-absen-detail {
+  width: 600px;
+  max-width: 95%;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  animation: modalPop 0.3s ease;
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.wakel-modal-subject-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: white;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  position: relative;
+}
+
+.wakel-subject-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wakel-subject-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.wakel-subject-title {
+  flex: 1;
+}
+
+.wakel-subject-title h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.wakel-subject-class {
+  font-size: 1.1rem;
+  font-weight: 500;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+/* ... (Rest of the modal content styles adapted to global vars) ... */
+.wakel-schedule-info-section {
+  padding: var(--spacing-xl);
+  background: white;
+}
+
+.wakel-schedule-info-section h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.wakel-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--light);
+}
+
+.wakel-info-row:last-child {
+  border-bottom: none;
+}
+
+.wakel-info-row .label {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.wakel-info-row .value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: right;
+}
+
+.wakel-status-section {
+  padding: var(--spacing-xl);
+  background: var(--bg-body);
+  border-top: 1px solid var(--light);
+}
+
+.wakel-status-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.wakel-status-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wakel-status-badge.hadir {
+  background: var(--success);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.wakel-btn-mulai-absensi {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  width: 100%;
+}
+
+.wakel-btn-mulai-absensi:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===================================
+   RESPONSIVE
+=================================== */
+@media (max-width: 1024px) {
+  .wakel-profile-section {
+    transform: translateX(-100%);
+  }
+
+  .wakel-profile-section.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .wakel-right-section {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .wakel-top-cards-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .wakel-time-range-card {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .wakel-dashboard-page {
+    padding-top: 70px;
+  }
+
+  .wakel-right-section {
+    padding: var(--spacing-md);
+  }
+
+  .wakel-top-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wakel-time-range-card {
+    grid-column: span 1;
+  }
+
+  .wakel-profile-section {
+    padding: 20px;
+  }
+}
+
+/* Figma-style Date Card */
+.wakel-figma-style {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wakel-datetime-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wakel-datetime-static {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 4px;
+}
+
+.wakel-datetime-right {
+  background: #e5eef9;
+  padding: 10px 18px;
+  border-radius: 12px;
+}
+
+.wakel-datetime-clock {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Clickable stats card */
+.wakel-stats-card.clickable {
+  cursor: pointer;
+  transition: none;
+  -webkit-tap-highlight-color: transparent !important;
+  background: white !important;
+}
+
+.wakel-stats-card.clickable:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white !important;
+}
+
+.wakel-stats-card.clickable:active {
+  transform: none;
+  background: white !important;
+}
+
+.wakel-stats-card.clickable:focus {
+  background: white !important;
+  outline: none !important;
+}

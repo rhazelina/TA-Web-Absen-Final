@@ -1,0 +1,449 @@
+/* Data.css */
+
+.kehadiran-siswa-page {
+  min-height: 100vh;
+  background-color: var(--bg-body);
+  background-image: url('../../assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding-top: 80px;
+  /* Standard navbar height + spacing */
+}
+
+.page-header {
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.page-header h1 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  /* Ensure visibility if background is light */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-content {
+  padding: 0 var(--spacing-xl) var(--spacing-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ===== HEADER BOX ===== */
+.header-box {
+  background: var(--bg-sidebar);
+  /* Dark blue theme */
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-md);
+  color: white;
+  margin-bottom: var(--spacing-xl);
+}
+
+.kelas-info {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  color: white;
+}
+
+.kelas-icon {
+  font-size: 2.5rem;
+}
+
+.kelas-nama {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* ===== RIGHT SIDE ===== */
+.header-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  align-items: flex-end;
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== STAT ===== */
+.stat-boxes {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  text-align: center;
+  min-width: 80px;
+  backdrop-filter: blur(4px);
+}
+
+.stat-item span {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  display: block;
+  font-weight: 500;
+}
+
+.stat-item strong {
+  color: white;
+  font-size: 1.25rem;
+  display: block;
+  margin-top: 2px;
+}
+
+/* ===== TABLE ===== */
+.table-wrapperr {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-primary);
+  /* Removed fixed layout specifically to allow responsiveness if needed */
+}
+
+/* 🔥 TINGGI BARIS LEBIH COMPACT */
+th,
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--light);
+  vertical-align: middle;
+}
+
+th {
+  color: var(--text-secondary);
+  font-weight: 700;
+  background: var(--bg-body);
+  text-align: center;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== ALIGNMENT KOLOM ===== */
+.col-no {
+  text-align: center;
+  width: 60px;
+}
+
+.col-nisn {
+  text-align: center;
+  width: 120px;
+}
+
+.col-nama {
+  text-align: left;
+}
+
+.col-status {
+  text-align: center;
+  width: 180px;
+}
+
+.col-keterangan {
+  text-align: left;
+}
+
+.col-aksi {
+  text-align: center;
+  width: 100px;
+}
+
+th.col-nama,
+td.col-nama {
+  text-align: left;
+}
+
+th.col-keterangan,
+td.col-keterangan {
+  text-align: left;
+}
+
+.keterangan-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ===== STATUS CELL ===== */
+.status-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: inline-block;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.status.hadir {
+  background: var(--success);
+}
+
+.status.izin {
+  background: var(--warning);
+  color: black;
+}
+
+.status.sakit {
+  background: var(--info);
+}
+
+/* Sakit often blue/purple, using Info for now or custom */
+.status.alpha {
+  background: var(--danger);
+}
+
+.status.pulang {
+  background: #ff6a1a;
+}
+
+.status.terlambat {
+  background: #ff9800;
+  color: #000;
+}
+
+.surat-belum {
+  font-size: 0.75rem;
+  color: var(--danger);
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* ===== KOLOM AKSI ===== */
+.aksi-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.btn-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-edit:hover {
+  background: var(--light);
+  color: var(--primary);
+}
+
+.btn-view:hover {
+  background: var(--light);
+  color: var(--info);
+}
+
+.btn-view.invisible {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ===== MODAL PREVIEW SURAT ===== */
+.preview-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: var(--spacing-lg);
+}
+
+.preview-modal-content {
+  background: white;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.preview-modal-header {
+  padding: var(--spacing-lg);
+  background: var(--primary);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.preview-modal-header .file-name {
+  margin: 4px 0 0 0;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.close-preview {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.close-preview:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.preview-modal-body {
+  flex: 1;
+  overflow: auto;
+  padding: var(--spacing-lg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-body);
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.pdf-preview {
+  width: 100%;
+  height: 600px;
+}
+
+.preview-modal-footer {
+  padding: var(--spacing-md);
+  background: white;
+  border-top: 1px solid var(--light);
+  display: flex;
+  justify-content: center;
+}
+
+.btn-download {
+  background: var(--success);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-download:hover {
+  background: #1e7e34;
+  /* Darker green */
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .header-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-right {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stat-boxes {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .stat-item {
+    flex: 1;
+  }
+
+  .table-wrapperr {
+    padding: var(--spacing-md);
+  }
+}

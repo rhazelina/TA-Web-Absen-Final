@@ -1,0 +1,283 @@
+/* ROOT */
+.jadwal-siswa-index-root {
+  padding-top: 110px;
+  /* Navbar 80px + 30px */
+  padding-left: var(--spacing-xl);
+  padding-right: var(--spacing-xl);
+  padding-bottom: 3rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background-color: var(--bg-body);
+  background-image: url('../../assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* HEADER */
+.jadwal-siswa-index-header {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
+}
+
+.jadwal-siswa-index-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: var(--spacing-xs);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.jadwal-siswa-index-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+}
+
+/* FILTER CARD */
+.filter-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.filter-label svg {
+  color: var(--primary);
+  margin-right: 0;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 12px 16px;
+  padding-right: 40px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  appearance: none;
+  color: var(--text-primary);
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.select-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* TABLE CARD */
+.jadwal-siswa-index-table-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  min-height: 400px;
+}
+
+.jadwal-siswa-index-table-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--bg-sidebar);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.jadwal-siswa-index-table-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.jadwal-siswa-index-table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* TABLE HEAD */
+thead {
+  background: #f8fafc;
+}
+
+thead th {
+  padding: 16px 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-align: left;
+  background-color: transparent;
+  color: #64748b;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* TABLE BODY */
+tbody td {
+  padding: 16px 20px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* SISWA INFO */
+.siswa-kompetensi-keahlian {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.siswa-wali-kelas {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.siswa-mapel {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* BADGES */
+.jadwal-siswa-index-badge-blue {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #e0f2fe;
+  color: #0284c7;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.jadwal-siswa-index-badge-green {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #dcfce7;
+  color: #166534;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.jadwal-siswa-index-badge-orange {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #ffedd5;
+  color: #9a3412;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ACTIONS */
+.jadwal-siswa-index-action {
+  display: flex;
+  gap: 8px;
+}
+
+.jadwal-siswa-index-btn-view,
+.jadwal-siswa-index-btn-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.jadwal-siswa-index-btn-view {
+  background: var(--primary);
+}
+
+.jadwal-siswa-index-btn-view:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.jadwal-siswa-index-btn-edit {
+  background: var(--warning);
+  color: #000;
+}
+
+.jadwal-siswa-index-btn-edit:hover {
+  background: #ffca2c;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.jadwal-siswa-index-btn-view svg,
+.jadwal-siswa-index-btn-edit svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .jadwal-siswa-index-root {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    padding-top: 100px;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

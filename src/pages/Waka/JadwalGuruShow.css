@@ -1,0 +1,362 @@
+/* ROOT */
+.jadwal-guru-show-root {
+  animation: fadeIn 0.3s ease;
+  padding-top: 110px;
+  /* Navbar 80px + 30px */
+  padding-left: var(--spacing-xl);
+  padding-right: var(--spacing-xl);
+  padding-bottom: 3rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background-color: var(--bg-body);
+  background-image: url('../../assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* LOADING */
+.jadwal-guru-show-loading-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-size: 1.2rem;
+  gap: 10px;
+}
+
+/* BREADCRUMB */
+.jadwal-guru-show-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-secondary);
+}
+
+.jadwal-guru-show-breadcrumb-link {
+  color: var(--primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color var(--transition-fast);
+}
+
+.jadwal-guru-show-breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+/* HEADER */
+.jadwal-guru-show-header {
+  background: var(--bg-sidebar);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  color: white;
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+}
+
+/* HEADER TOP */
+.jadwal-guru-show-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.jadwal-guru-show-header-left {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.jadwal-guru-show-icon {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0;
+  border-radius: var(--radius-lg);
+  font-size: 2.5rem;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jadwal-guru-show-title h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.jadwal-guru-show-title p {
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+/* HEADER ACTION */
+.jadwal-guru-show-header-action {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* BUTTON BACK */
+.jadwal-guru-show-btn-back {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  font-weight: 600;
+  transition: background var(--transition-fast);
+}
+
+.jadwal-guru-show-btn-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* INFO GRID */
+.jadwal-guru-show-header-info {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.jadwal-guru-show-info-box {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-radius: var(--radius-md);
+}
+
+.jadwal-guru-show-info-box span {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.jadwal-guru-show-info-box strong {
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* CARD */
+.jadwal-guru-show-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.jadwal-guru-show-card-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.jadwal-guru-show-card-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.jadwal-guru-show-card-header p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.jadwal-guru-show-card-body {
+  padding: var(--spacing-xl);
+}
+
+/* IMAGE */
+.jadwal-guru-show-image-wrapper {
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  cursor: zoom-in;
+}
+
+.jadwal-guru-show-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.jadwal-guru-show-image-wrapper:hover img {
+  transform: scale(1.02);
+}
+
+/* ACTION BUTTONS */
+.jadwal-guru-show-action {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+}
+
+.jadwal-guru-show-btn-delete {
+  background: var(--danger);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.jadwal-guru-show-btn-delete:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.jadwal-guru-show-btn-download {
+  background: var(--success);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.jadwal-guru-show-btn-download:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* EMPTY STATE */
+.jadwal-guru-show-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+  background: #f8fafc;
+  border-radius: var(--radius-lg);
+  border: 2px dashed #e2e8f0;
+}
+
+.jadwal-guru-show-empty svg {
+  font-size: 3.5rem;
+  margin-bottom: var(--spacing-md);
+  color: #cbd5e1;
+}
+
+.jadwal-guru-show-empty h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+/* FULLSCREEN */
+.jadwal-guru-show-fullscreen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  cursor: zoom-out;
+}
+
+.jadwal-guru-show-fullscreen img {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  cursor: default;
+}
+
+.jadwal-guru-show-fullscreen-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  color: white;
+  font-size: 2.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.jadwal-guru-show-fullscreen-close:hover {
+  opacity: 1;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .jadwal-guru-show-header-info {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .jadwal-guru-show-root {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    padding-top: 100px;
+  }
+
+  .jadwal-guru-show-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .jadwal-guru-show-header-action {
+    width: 100%;
+  }
+
+  .jadwal-guru-show-btn-back {
+    width: 100%;
+  }
+
+  .jadwal-guru-show-action {
+    flex-direction: column;
+  }
+
+  .jadwal-guru-show-btn-delete,
+  .jadwal-guru-show-btn-download {
+    width: 100%;
+    justify-content: center;
+  }
+}

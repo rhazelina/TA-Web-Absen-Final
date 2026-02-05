@@ -1,0 +1,513 @@
+/* ROOT */
+.kehadiran-siswa-rekap-page {
+  min-height: 100vh;
+  padding-top: 110px;
+  /* Navbar 80px + 30px */
+  padding-left: var(--spacing-xl);
+  padding-right: var(--spacing-xl);
+  padding-bottom: 3rem;
+  box-sizing: border-box;
+  background-color: var(--bg-body);
+  background-image: url('../../assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* HEADER CARD */
+.kehadiran-siswa-rekap-header-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.kehadiran-siswa-rekap-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.kehadiran-siswa-rekap-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.kehadiran-siswa-rekap-icon {
+  width: 50px;
+  height: 50px;
+  background: var(--bg-icon);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
+.kehadiran-siswa-rekap-header-left h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* INFO BAR */
+.kehadiran-siswa-rekap-info {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.info-badge {
+  background: var(--bg-sidebar);
+  color: white;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+/* HEADER RIGHT */
+.kehadiran-siswa-rekap-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* FILTER PERIODE */
+.kehadiran-siswa-rekap-periode-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.kehadiran-siswa-rekap-periode-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.kehadiran-siswa-rekap-date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kehadiran-siswa-rekap-date-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  gap: 8px;
+  transition: all var(--transition-fast);
+}
+
+.kehadiran-siswa-rekap-date-input:hover {
+  border-color: var(--primary);
+}
+
+.kehadiran-siswa-rekap-date-input svg {
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
+.kehadiran-siswa-rekap-date-input input[type="date"] {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.date-separator {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.kehadiran-siswa-rekap-apply-periode {
+  padding: 8px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.kehadiran-siswa-rekap-apply-periode:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.kehadiran-siswa-rekap-apply-periode:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* EXPORT BUTTON */
+.kehadiran-guru-index-export-wrapper {
+  position: relative;
+}
+
+.kehadiran-guru-index-export-btn {
+  background: var(--success);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.kehadiran-guru-index-export-btn:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kehadiran-guru-index-export-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  min-width: 140px;
+  z-index: 50;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.export-item {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: background var(--transition-fast);
+}
+
+.export-item:hover {
+  background: #f1f5f9;
+}
+
+.export-item.pdf svg {
+  color: var(--danger);
+}
+
+.export-item.excel svg {
+  color: var(--success);
+}
+
+/* TABLE */
+.kehadiran-siswa-rekap-table-wrapper {
+  background: white;
+  border-radius: var(--radius-xl);
+  overflow-x: auto;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.kehadiran-siswa-rekap-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kehadiran-siswa-rekap-table thead {
+  background: #f8fafc;
+}
+
+.kehadiran-siswa-rekap-table th {
+  padding: 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: left;
+}
+
+.kehadiran-siswa-rekap-table td {
+  padding: 16px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.kehadiran-siswa-rekap-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* STATUS COLORS */
+.hadir {
+  color: #166534;
+  font-weight: 700;
+}
+
+.izin {
+  color: #854d0e;
+  font-weight: 700;
+}
+
+.sakit {
+  color: #6b21a8;
+  font-weight: 700;
+}
+
+.alpha {
+  color: #991b1b;
+  font-weight: 700;
+}
+
+.pulang {
+  color: #9a3412;
+  font-weight: 700;
+}
+
+/* EDIT BUTTON */
+.kehadiran-siswa-rekap-edit {
+  background: var(--warning);
+  color: #000;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.kehadiran-siswa-rekap-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* BACK BUTTON */
+.kehadiran-siswa-rekap-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--secondary);
+  color: white;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  border: none;
+  cursor: pointer;
+  margin-top: var(--spacing-lg);
+}
+
+.kehadiran-siswa-rekap-back:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* MODAL */
+.kehadiran-siswa-rekap-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.kehadiran-siswa-rekap-modal {
+  background: white;
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  animation: modalSlideIn 0.25s ease;
+  overflow: hidden;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kehadiran-siswa-rekap-modal-title {
+  padding: var(--spacing-lg);
+  background: var(--bg-sidebar);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+}
+
+.kehadiran-siswa-rekap-modal-body {
+  padding: var(--spacing-xl);
+  display: grid;
+  gap: 12px;
+}
+
+.kehadiran-siswa-rekap-modal-body label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.kehadiran-siswa-rekap-modal-body input {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid #e5e7eb;
+  font-size: 1rem;
+  background: #f9fafb;
+  color: var(--text-primary);
+}
+
+.kehadiran-siswa-rekap-modal-body input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+  background: white;
+}
+
+/* MODAL ACTIONS */
+.kehadiran-siswa-rekap-modal-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.kehadiran-siswa-rekap-modal-cancel {
+  flex: 1;
+  background: white;
+  color: var(--text-secondary);
+  border: 1px solid #d1d5db;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.kehadiran-siswa-rekap-modal-cancel:hover {
+  background: #f3f4f6;
+  color: var(--text-primary);
+}
+
+.kehadiran-siswa-rekap-modal-save {
+  flex: 1;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.kehadiran-siswa-rekap-modal-save:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .kehadiran-siswa-rekap-page {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    padding-top: 100px;
+  }
+
+  .kehadiran-siswa-rekap-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .kehadiran-siswa-rekap-header-right {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .kehadiran-siswa-rekap-periode-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .kehadiran-siswa-rekap-date-range {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .kehadiran-siswa-rekap-date-input {
+    width: 100%;
+  }
+
+  .kehadiran-siswa-rekap-date-input input {
+    width: 100%;
+  }
+
+  .date-separator {
+    display: none;
+  }
+
+  .kehadiran-siswa-rekap-apply-periode {
+    width: 100%;
+  }
+
+  .kehadiran-guru-index-export-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .kehadiran-guru-index-export-wrapper {
+    width: 100%;
+  }
+}

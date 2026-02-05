@@ -1,0 +1,1081 @@
+/* DashboardSiswa.css */
+
+/* ========== DASHBOARD MAIN SISWA ========== */
+
+.siswa-dashboard-utama {
+  min-height: 100vh;
+  background-color: var(--bg-body);
+  background-image: url('../../assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  position: relative;
+  padding-top: 80px;
+  /* Kompensasi navbar fixed 75px */
+}
+
+/* Navbar styling to stay on top */
+.siswa-navbar-atas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 75px;
+  background: var(--bg-sidebar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-xl);
+  color: white;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(5px);
+}
+
+/* ========== PROFILE SECTION (SIDEBAR) ========== */
+.siswa-bagian-profil {
+  position: fixed;
+  left: 0;
+  top: 75px;
+  width: 280px;
+  height: calc(100vh - 75px);
+  background: var(--bg-sidebar);
+  padding: var(--spacing-xl) var(--spacing-md);
+  text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 900;
+  overflow-y: auto;
+  transition: transform var(--transition-normal);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.siswa-bagian-profil.closed {
+  transform: translateX(-100%);
+}
+
+.siswa-konten-profil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.siswa-nama-profil {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 var(--spacing-md) 0;
+  color: white;
+}
+
+.siswa-pembungkus-avatar {
+  position: relative;
+  margin-bottom: var(--spacing-lg);
+}
+
+.siswa-avatar-profil {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: white;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-md);
+}
+
+.siswa-ikon-avatar {
+  width: 90px;
+  height: 90px;
+  color: var(--text-primary);
+}
+
+.siswa-ikon-avatar svg {
+  width: 100%;
+  height: 100%;
+}
+
+.siswa-gambar-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.siswa-tombol-edit-profil {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: white;
+}
+
+.siswa-tombol-edit-profil:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
+}
+
+.siswa-kelas-profil {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: var(--spacing-md) 0 var(--spacing-xs) 0;
+  color: white;
+}
+
+.siswa-id-profil {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.siswa-petunjuk-profil {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  margin: var(--spacing-sm) 0 0 0;
+  font-style: italic;
+}
+
+.btn-logout {
+  width: 100%;
+  background: var(--danger);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-fast);
+  margin-top: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-logout:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ========== MAIN CONTENT AREA ========== */
+.siswa-dashboard-konten {
+  margin-left: 280px;
+  /* Match sidebar width */
+  padding: var(--spacing-xl);
+  transition: margin-left var(--transition-normal);
+  max-width: 1600px;
+}
+
+.siswa-dashboard-konten.full-width {
+  margin-left: 0;
+}
+
+.siswa-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+}
+
+/* ========== KEHADIRAN CARD ========== */
+.siswa-kartu-kehadiran {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.siswa-judul-kehadiran {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  padding-left: var(--spacing-md);
+  border-left: 4px solid var(--primary);
+}
+
+.siswa-baris-info-waktu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+  /* Responsive wrap */
+}
+
+.siswa-lencana-waktu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.siswa-tampilan-rentang-waktu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.siswa-kotak-tampilan-waktu {
+  flex: 1;
+  background: white;
+  border: 2px solid #d1d5db;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm);
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 100px;
+}
+
+.siswa-pemisah-rentang-waktu {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.siswa-grid-checkin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.siswa-btn-masuk,
+.siswa-btn-pulang {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  color: white;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.siswa-btn-masuk {
+  background: var(--primary);
+}
+
+.siswa-btn-masuk:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.siswa-btn-pulang {
+  background: var(--info);
+}
+
+.siswa-btn-pulang:hover {
+  background: #138496;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.siswa-konten-btn {
+  text-align: center;
+  width: 100%;
+}
+
+.siswa-label-btn {
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: block;
+}
+
+.siswa-waktu-btn {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.siswa-grid-aksi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.siswa-btn-aksi {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: white;
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-lg);
+  color: var(--primary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.siswa-btn-aksi:hover {
+  background: var(--light);
+  transform: translateY(-1px);
+}
+
+/* ========== RIWAYAT CARD ========== */
+.siswa-kartu-riwayat {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.siswa-header-riwayat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.siswa-judul-riwayat {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-left: var(--spacing-md);
+  border-left: 4px solid var(--primary);
+  margin: 0;
+}
+
+.siswa-btn-lihat-semua {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.siswa-list-riwayat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.siswa-item-riwayat {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-body);
+  border-left: 4px solid var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  transition: transform var(--transition-fast);
+}
+
+.siswa-item-riwayat:hover {
+  transform: translateX(4px);
+}
+
+.siswa-nilai-jam-besar {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.siswa-baris-mapel-riwayat {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: 4px;
+}
+
+.siswa-teks-mapel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .siswa-bagian-profil {
+    transform: translateX(-100%);
+  }
+
+  .siswa-bagian-profil.open {
+    transform: translateX(0);
+  }
+
+  .siswa-dashboard-konten {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .siswa-dashboard-konten {
+    padding: var(--spacing-md);
+  }
+
+  .siswa-navbar-atas {
+    padding: 0 var(--spacing-md);
+  }
+
+  .siswa-grid-checkin,
+  .siswa-grid-aksi {
+    grid-template-columns: 1fr;
+  }
+
+  .siswa-tampilan-rentang-waktu {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .siswa-pemisah-rentang-waktu {
+    transform: rotate(90deg);
+  }
+
+  .siswa-kotak-tampilan-waktu {
+    width: 100%;
+  }
+}
+
+.siswa-warna-tooltip {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+}
+
+.siswa-konten-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.siswa-label-tooltip {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.siswa-nilai-tooltip {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+/* ========== REKAP RECORDS ========== */
+.siswa-rekaman-rekap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.siswa-rekaman-rekap-item {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.siswa-tanggal-rekaman {
+  background: #dbeafe;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  min-width: 80px;
+}
+
+.siswa-hari-rekaman {
+  font-size: 14px;
+  font-weight: bold;
+  color: #374151;
+  margin: 0;
+}
+
+.siswa-nomor-tanggal-rekaman {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.siswa-tombol-status-rekaman {
+  flex: 1;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.siswa-tombol-status-rekaman.orange {
+  background: #f97316;
+}
+
+.siswa-tombol-status-rekaman.orange:hover {
+  background: #ea580c;
+}
+
+.siswa-tombol-status-rekaman.blue {
+  background: #3b82f6;
+}
+
+.siswa-tombol-status-rekaman.blue:hover {
+  background: #2563eb;
+}
+
+.siswa-tombol-status-rekaman.red {
+  background: #ef4444;
+}
+
+.siswa-tombol-status-rekaman.red:hover {
+  background: #dc2626;
+}
+
+.siswa-tombol-status-rekaman.green {
+  background: #22c55e;
+}
+
+.siswa-tombol-status-rekaman.green:hover {
+  background: #16a34a;
+}
+
+.siswa-grup-waktu-rekaman {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex: 1;
+}
+
+.siswa-waktu-rekaman {
+  flex: 1;
+}
+
+.siswa-nilai-waktu {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  color: #1f2937;
+}
+
+.siswa-label-waktu {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.siswa-pemisah-waktu {
+  font-size: 32px;
+  font-weight: bold;
+  color: #9ca3af;
+}
+
+.siswa-tidak-ada-rekaman {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 2px dashed #d1d5db;
+}
+
+.siswa-tidak-ada-rekaman p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ========== REKAP IZIN STYLES ========== */
+.siswa-legenda-izin {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+  border: 2px solid #e5e7eb;
+}
+
+.siswa-legenda-izin .siswa-item-legenda {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.siswa-legenda-izin .siswa-warna-legenda {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.siswa-rekaman-izin {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.siswa-kartu-rekaman-izin {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+}
+
+.siswa-kartu-rekaman-izin:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.siswa-header-rekaman-izin {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.siswa-lencana-tanggal-izin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  min-width: 80px;
+}
+
+.siswa-hari-izin {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.siswa-tanggal-izin {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.siswa-lencana-tipe-izin {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  flex: 1;
+  text-align: center;
+}
+
+.siswa-lencana-tipe-izin.izin {
+  background: #f97316;
+}
+
+.siswa-lencana-tipe-izin.sakit {
+  background: #3b82f6;
+}
+
+.siswa-lencana-tipe-izin.alpha {
+  background: #ef4444;
+}
+
+.siswa-lencana-status-izin {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 140px;
+}
+
+.siswa-status-disetujui {
+  background: #dcfce7;
+  color: #16a34a;
+  border: 2px solid #22c55e;
+}
+
+.siswa-status-ditolak {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 2px solid #ef4444;
+}
+
+.siswa-status-menunggu {
+  background: #fef3c7;
+  color: #ca8a04;
+  border: 2px solid #eab308;
+}
+
+.siswa-status-tidak-ada {
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 2px solid #d1d5db;
+}
+
+.siswa-body-rekaman-izin {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.siswa-baris-info-izin {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.siswa-label-izin {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  min-width: 160px;
+}
+
+.siswa-nilai-izin {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1f2937;
+  flex: 1;
+}
+
+/* ========== ALL RIWAYAT MODAL ========== */
+.siswa-overlay-modal-semua-riwayat {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  padding-top: 90px;
+  /* NAVBAR HEIGHT 75px + 15px PADDING */
+  overflow-y: auto;
+}
+
+.siswa-modal-semua-riwayat {
+  width: 100%;
+  max-width: 900px;
+  max-height: calc(100vh - 105px);
+  /* 100vh - (75px navbar + 15px padding top + 15px padding bottom) */
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  animation: siswa-modal-slide-up 0.3s ease-out;
+  position: relative;
+  z-index: 10000;
+}
+
+@keyframes siswa-modal-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.siswa-header-semua-riwayat {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  border-bottom: 2px solid var(--border-color);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.siswa-header-semua-riwayat .siswa-tombol-kembali {
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.siswa-header-semua-riwayat h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.siswa-kartu-semua-riwayat {
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  max-height: calc(100vh - 205px);
+  /* DISESUAIKAN */
+}
+
+.siswa-kartu-semua-riwayat .siswa-list-riwayat {
+  display: flex;
+  flex: 1;
+  overflow-y: auto;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ========== NEW CLASSES FOR MODALS AND CHARTS ========== */
+
+.siswa-modal-wrapper-custom {
+  width: 100%;
+  max-width: 800px;
+  max-height: 85vh;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.siswa-modal-content-scrollable {
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  max-height: calc(85vh - 100px);
+  background: var(--bg-card);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+.siswa-modal-image-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  align-items: center;
+}
+
+.siswa-modal-image-box {
+  width: 100%;
+  max-width: 650px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 2px solid var(--border-color);
+}
+
+.siswa-modal-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.siswa-modal-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: var(--bg-body);
+  border-radius: var(--radius-lg);
+  border: 3px dashed var(--border-color);
+  min-height: 400px;
+}
+
+.siswa-empty-icon-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.siswa-empty-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.siswa-empty-desc {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 400px;
+}
+
+.siswa-chart-container-box {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.siswa-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.siswa-chart-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.siswa-chart-icon-box {
+  width: 40px;
+  height: 40px;
+  background: var(--bg-body);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.siswa-chart-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.siswa-chart-subtitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1280px) {
+  .siswa-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .siswa-statistik-rekap {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .siswa-dashboard-konten {
+    padding: var(--spacing-md);
+    padding-top: 100px;
+    /* Maintain spacing on mobile */
+  }
+
+  .siswa-grid-checkin,
+  .siswa-grid-aksi {
+    grid-template-columns: 1fr;
+  }
+
+  .siswa-filter-rekap {
+    grid-template-columns: 1fr;
+  }
+
+  .siswa-grid-statistik {
+    grid-template-columns: 1fr;
+  }
+
+  .siswa-statistik-rekap {
+    grid-template-columns: 1fr;
+  }
+
+  .siswa-bagian-profil {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: var(--spacing-md);
+    top: 75px;
+  }
+
+  .siswa-dashboard-konten {
+    padding-left: var(--spacing-md);
+    padding-top: 120px;
+    /* Extra space for mobile after profile */
+  }
+
+  .siswa-nilai-stat {
+    font-size: 2.5rem;
+  }
+
+  .siswa-pembungkus-chart-donut {
+    width: 280px;
+    height: 280px;
+  }
+
+  .siswa-chart-donut {
+    width: 220px;
+    height: 220px;
+  }
+
+  .siswa-dalam-chart {
+    width: 140px;
+    height: 140px;
+  }
+
+  .siswa-kontainer-tidak-ada-data {
+    padding: 40px 20px;
+  }
+
+  .siswa-judul-tidak-ada-data {
+    font-size: 1.25rem;
+  }
+
+  .siswa-teks-tidak-ada-data {
+    font-size: 0.9rem;
+  }
+}
