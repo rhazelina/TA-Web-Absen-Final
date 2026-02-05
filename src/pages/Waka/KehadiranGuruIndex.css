@@ -234,6 +234,10 @@
   background: #f97316;
 }
 
+.legend-terlambat {
+  background: #f59e0b;
+}
+
 /* TABLE STYLE */
 .kehadiran-guru-index-table-wrapper {
   overflow-x: auto;
@@ -312,6 +316,10 @@ tbody tr:hover {
 
 .jam-pulang {
   background: #f97316;
+}
+
+.jam-terlambat {
+  background: #f59e0b;
 }
 
 /* ACTIONS */

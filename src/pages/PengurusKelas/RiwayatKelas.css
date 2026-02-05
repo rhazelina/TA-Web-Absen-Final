@@ -100,77 +100,93 @@
   color: white;
 }
 
-/* Statistics Cards */
-.stats-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
+/* Statistics Cards - Pengurus dengan 6 cards */
+.pengurus-stats-wrapper {
   margin-bottom: 2rem;
+  width: 100%;
 }
 
-.stat-card {
-  background: white;
-  border-radius: 0.75rem;
-  padding: 1.5rem 1rem;
-  text-align: center;
+.pengurus-stats-grid {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.pengurus-stat-box {
+  flex: 1;
+  min-width: 0;
+  height: 70px;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   border: 2px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  background: white;
 }
 
-.stat-card .stat-label {
-  font-size: 0.875rem;
+.pengurus-stat-box .pengurus-stat-title {
+  font-size: 0.65rem;
   font-weight: 600;
+  margin-bottom: 0.3rem;
+  text-align: center;
+  white-space: nowrap;
   color: #6b7280;
-  margin-bottom: 0.5rem;
-  text-align: center;
 }
 
-.stat-card .stat-value {
-  font-size: 2rem;
+.pengurus-stat-box .pengurus-stat-number {
+  font-size: 1.5rem;
   font-weight: 700;
-  text-align: center;
+  line-height: 1;
 }
 
-.stat-card.hadir {
+.pengurus-stat-box.box-hadir {
   border-color: #1FA83D;
 }
 
-.stat-card.hadir .stat-value {
+.pengurus-stat-box.box-hadir .pengurus-stat-number {
   color: #1FA83D;
 }
 
-.stat-card.izin {
+.pengurus-stat-box.box-terlambat {
+  border-color: #f59e0b;
+}
+
+.pengurus-stat-box.box-terlambat .pengurus-stat-number {
+  color: #f59e0b;
+}
+
+.pengurus-stat-box.box-izin {
   border-color: #ECE10A;
 }
 
-.stat-card.izin .stat-value {
+.pengurus-stat-box.box-izin .pengurus-stat-number {
   color: #ECE10A;
 }
 
-.stat-card.sakit {
+.pengurus-stat-box.box-sakit {
   border-color: #9A0898;
 }
 
-.stat-card.sakit .stat-value {
+.pengurus-stat-box.box-sakit .pengurus-stat-number {
   color: #9A0898;
 }
 
-.stat-card.alpha {
+.pengurus-stat-box.box-alpha {
   border-color: #D90000;
 }
 
-.stat-card.alpha .stat-value {
+.pengurus-stat-box.box-alpha .pengurus-stat-number {
   color: #D90000;
 }
 
-.stat-card.pulang {
+.pengurus-stat-box.box-pulang {
   border-color: #FF5F1A;
 }
 
-.stat-card.pulang .stat-value {
+.pengurus-stat-box.box-pulang .pengurus-stat-number {
   color: #FF5F1A;
 }
 
@@ -243,8 +259,12 @@
   background: #1FA83D;
 }
 
+.status-terlambat {
+  background:  #FF5F1A;
+}
+
 .status-izin {
-  background: #d8bf1a;
+  background: #EDD329;
 }
 
 .status-sakit {
@@ -256,7 +276,7 @@
 }
 
 .status-pulang {
-  background: #FF5F1A;
+  background: #243CB5;
 }
 
 /* Updated View Button - No background, just icon */
@@ -358,7 +378,7 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #f0f9ff;
+  color: #1e3a8a;
 }
 
 .close-btn {
@@ -528,9 +548,44 @@
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+  .pengurus-stats-grid {
+    gap: 0.4rem;
+  }
+
+  .pengurus-stat-box {
+    padding: 0.4rem;
+    height: 65px;
+  }
+
+  .pengurus-stat-box .pengurus-stat-title {
+    font-size: 0.6rem;
+  }
+
+  .pengurus-stat-box .pengurus-stat-number {
+    font-size: 1.3rem;
+  }
+}
+
 @media (max-width: 1024px) {
-  .stats-container {
+  .pengurus-stats-grid {
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .pengurus-stat-box {
+    padding: 1rem 1.25rem;
+    height: 80px;
+  }
+
+  .pengurus-stat-box .pengurus-stat-number {
+    font-size: 1.75rem;
+  }
+
+  .pengurus-stat-box .pengurus-stat-title {
+    font-size: 0.75rem;
   }
 
   .table-card {
@@ -561,8 +616,17 @@
     flex-direction: column;
   }
 
-  .stats-container {
-    grid-template-columns: repeat(2, 1fr);
+  .pengurus-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .pengurus-stat-box {
+    padding: 1rem;
+  }
+
+  .pengurus-stat-box .pengurus-stat-number {
+    font-size: 1.5rem;
   }
 
   .table-card {
@@ -603,8 +667,8 @@
 }
 
 @media (max-width: 480px) {
-  .stats-container {
-    grid-template-columns: 1fr;
+  .pengurus-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

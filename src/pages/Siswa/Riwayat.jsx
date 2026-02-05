@@ -1,10 +1,10 @@
-// Riwayat.jsx - Fixed Date Filter with dd/mm/yy format
+// Riwayat.jsx - Fixed version with unique class names
 import React, { useState, useEffect } from 'react';
 import { Calendar, Eye, X, ZoomIn } from 'lucide-react';
 import './Riwayat.css';
 import NavbarSiswa from '../../components/Siswa/NavbarSiswa';
 
-// Data Dummy dengan alasan lengkap dan foto bukti
+// Data Dummy dengan alasan lengkap dan foto bukti - termasuk status Terlambat
 const dummyAttendanceRecords = [
   {
     recordDate: '2026-01-25',
@@ -67,6 +67,18 @@ const dummyAttendanceRecords = [
     proofImage: null
   },
   {
+    recordDate: '2026-01-30',
+    date: '30/01/26',
+    period: '1-4',
+    subject: 'Biologi',
+    teacher: 'Nur Aini S.pd',
+    status: 'Terlambat',
+    statusColor: 'status-terlambat',
+    reason: 'Terjebak macet di jalan raya',
+    proofDocument: null,
+    proofImage: null
+  },
+  {
     recordDate: '2026-01-31',
     date: '31/01/26',
     period: '1-4',
@@ -87,6 +99,18 @@ const dummyAttendanceRecords = [
     status: 'Hadir',
     statusColor: 'status-hadir',
     reason: null,
+    proofDocument: null,
+    proofImage: null
+  },
+  {
+    recordDate: '2026-02-03',
+    date: '03/02/26',
+    period: '1-4',
+    subject: 'Bahasa Inggris',
+    teacher: 'Sarah Johnson M.pd',
+    status: 'Terlambat',
+    statusColor: 'status-terlambat',
+    reason: 'Bangun kesiangan',
     proofDocument: null,
     proofImage: null
   },
@@ -178,10 +202,11 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
 
   const filteredRecords = filterByDateRange(attendanceRecords);
 
-  // Hitung statistik berdasarkan data yang difilter
+  // Hitung statistik berdasarkan data yang difilter - termasuk terlambat
   const calculateStats = () => {
     const stats = {
       hadir: 0,
+      terlambat: 0,
       izin: 0,
       sakit: 0,
       alpha: 0,
@@ -261,27 +286,33 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
           </div>
         </div>
 
-        {/* Statistics Cards */}
-        <div className="stats-container">
-          <div className="stat-card hadir">
-            <div className="stat-label">Hadir</div>
-            <div className="stat-value">{stats.hadir}</div>
-          </div>
-          <div className="stat-card izin">
-            <div className="stat-label">Izin</div>
-            <div className="stat-value">{stats.izin}</div>
-          </div>
-          <div className="stat-card sakit">
-            <div className="stat-label">Sakit</div>
-            <div className="stat-value">{stats.sakit}</div>
-          </div>
-          <div className="stat-card alpha">
-            <div className="stat-label">Alpha</div>
-            <div className="stat-value">{stats.alpha}</div>
-          </div>
-          <div className="stat-card pulang">
-            <div className="stat-label">Pulang</div>
-            <div className="stat-value">{stats.pulang}</div>
+        {/* Statistics Cards - FIXED dengan class name baru */}
+        <div className="riwayat-stats-wrapper">
+          <div className="riwayat-stats-grid">
+            <div className="riwayat-stat-box box-hadir">
+              <div className="riwayat-stat-title">Hadir</div>
+              <div className="riwayat-stat-number">{stats.hadir}</div>
+            </div>
+            <div className="riwayat-stat-box box-terlambat">
+              <div className="riwayat-stat-title">Terlambat</div>
+              <div className="riwayat-stat-number">{stats.terlambat}</div>
+            </div>
+            <div className="riwayat-stat-box box-izin">
+              <div className="riwayat-stat-title">Izin</div>
+              <div className="riwayat-stat-number">{stats.izin}</div>
+            </div>
+            <div className="riwayat-stat-box box-sakit">
+              <div className="riwayat-stat-title">Sakit</div>
+              <div className="riwayat-stat-number">{stats.sakit}</div>
+            </div>
+            <div className="riwayat-stat-box box-alpha">
+              <div className="riwayat-stat-title">Alpha</div>
+              <div className="riwayat-stat-number">{stats.alpha}</div>
+            </div>
+            <div className="riwayat-stat-box box-pulang">
+              <div className="riwayat-stat-title">Pulang</div>
+              <div className="riwayat-stat-number">{stats.pulang}</div>
+            </div>
           </div>
         </div>
 
@@ -423,6 +454,8 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                   <p className="no-reason-text">
                     {selectedRecord.status === 'Hadir' 
                       ? 'Siswa hadir tepat waktu' 
+                      : selectedRecord.status === 'Terlambat'
+                      ? 'Siswa datang terlambat'
                       : 'Tidak ada keterangan tambahan'}
                   </p>
                 </>

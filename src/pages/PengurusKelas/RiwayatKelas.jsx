@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, ChevronDown, Eye, X, Users, ZoomIn } from 'lucide-react';
 import NavbarPengurus from "../../components/PengurusKelas/NavbarPengurus";
-import CustomAlert from '../../components/Common/CustomAlert';
 import './RiwayatKelas.css';
 
 // Data siswa kelas 12 RPL 2
@@ -18,7 +17,7 @@ const studentList = [
   { id: 10, name: 'Joko Widodo', nis: '2024010' }
 ];
 
-// Data dummy dengan nama siswa dan proof image
+// Data dummy dengan nama siswa, proof image, dan status Terlambat
 const dummyAttendanceRecords = [
   // Ahmad Fauzi
   {
@@ -58,9 +57,9 @@ const dummyAttendanceRecords = [
     period: '1-4',
     subject: 'Matematika',
     teacher: 'Afifah Diantebas Andra S.pd',
-    status: 'Hadir',
-    statusColor: 'status-hadir',
-    reason: null,
+    status: 'Terlambat',
+    statusColor: 'status-terlambat',
+    reason: 'Terjebak macet di jalan',
     proofDocument: null,
     proofImage: null,
     studentId: 2,
@@ -135,9 +134,9 @@ const dummyAttendanceRecords = [
     period: '5-8',
     subject: 'Pemrograman Web',
     teacher: 'Eko Prasetyo S.Kom',
-    status: 'Hadir',
-    statusColor: 'status-hadir',
-    reason: null,
+    status: 'Terlambat',
+    statusColor: 'status-terlambat',
+    reason: 'Bangun kesiangan',
     proofDocument: null,
     proofImage: null,
     studentId: 4,
@@ -276,7 +275,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
   // Set default tanggal awal bulan dan hari ini
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
+  
   const [startDate, setStartDate] = useState(firstDayOfMonth.toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(today.toISOString().split('T')[0]);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -285,31 +284,6 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [zoomedImage, setZoomedImage] = useState(null);
-
-  // Custom Alert State
-  const [alertState, setAlertState] = useState({
-    show: false,
-    type: 'info',
-    title: '',
-    message: '',
-    action: null,
-    data: null
-  });
-
-  const showAlert = (type, title, message, action = null, data = null) => {
-    setAlertState({
-      show: true,
-      type,
-      title,
-      message,
-      action,
-      data
-    });
-  };
-
-  const closeAlert = () => {
-    setAlertState(prev => ({ ...prev, show: false }));
-  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -327,7 +301,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
   const handleStartDateChange = (e) => {
     const newStartDate = e.target.value;
     setStartDate(newStartDate);
-
+    
     // Jika tanggal akhir lebih kecil dari tanggal awal yang baru, update tanggal akhir
     if (new Date(endDate) < new Date(newStartDate)) {
       setEndDate(newStartDate);
@@ -346,19 +320,19 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
   const filterRecords = (records) => {
     return records.filter(record => {
       if (!record.recordDate) return false;
-
+      
       const recordDate = new Date(record.recordDate);
       const start = new Date(startDate);
       const end = new Date(endDate);
-
+      
       // Set time to 00:00:00 for proper date comparison
       recordDate.setHours(0, 0, 0, 0);
       start.setHours(0, 0, 0, 0);
       end.setHours(0, 0, 0, 0);
-
+      
       const matchDate = recordDate >= start && recordDate <= end;
       const matchStudent = selectedStudent === 0 || record.studentId === selectedStudent;
-
+      
       return matchDate && matchStudent;
     });
   };
@@ -368,6 +342,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
   const calculateStats = () => {
     const stats = {
       hadir: 0,
+      terlambat: 0,
       izin: 0,
       sakit: 0,
       alpha: 0,
@@ -389,7 +364,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
   const handleDateApply = () => {
     // Validasi tanggal
     if (new Date(startDate) > new Date(endDate)) {
-      showAlert('warning', 'Peringatan', 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir!');
+      alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir!');
       return;
     }
     setShowDatePicker(false);
@@ -431,23 +406,14 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
 
   return (
     <div className="riwayat-page">
-      <CustomAlert
-        isOpen={alertState.show}
-        onClose={closeAlert}
-        title={alertState.title}
-        message={alertState.message}
-        type={alertState.type}
-        confirmLabel="Ya"
-        cancelLabel="Batal"
-      />
       <NavbarPengurus />
-
+      
       <main className="riwayat-main">
         {/* Top Controls */}
         <div className="top-controls" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           {/* Date Range Picker */}
           <div className="riwayat-month-picker">
-            <button
+            <button 
               className="riwayat-month-picker-button"
               onClick={() => setShowDatePicker(!showDatePicker)}
             >
@@ -455,13 +421,13 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                 <Calendar size={20} color="#000000" />
                 <span>Periode: {formatDateDisplay(startDate)} - {formatDateDisplay(endDate)}</span>
               </div>
-              <ChevronDown
+              <ChevronDown 
                 size={24}
                 color="#000000"
-                style={{
+                style={{ 
                   transform: showDatePicker ? 'rotate(180deg)' : 'rotate(0deg)',
                   transition: 'transform 0.2s'
-                }}
+                }} 
               />
             </button>
 
@@ -470,13 +436,13 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                 <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#6b7280', marginBottom: '0.75rem' }}>
                   Pilih Rentang Tanggal
                 </div>
-
+                
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div>
-                    <label style={{
-                      display: 'block',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
+                    <label style={{ 
+                      display: 'block', 
+                      fontSize: '0.875rem', 
+                      fontWeight: 600, 
                       color: '#374151',
                       marginBottom: '0.5rem'
                     }}>
@@ -489,7 +455,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                       style={{
                         width: '100%',
                         padding: '0.75rem',
-                        background: '#ffffff',
+                        background:'#ffffff',
                         border: '2px solid #d1d5db',
                         borderRadius: '0.5rem',
                         fontSize: '0.875rem',
@@ -501,10 +467,10 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                   </div>
 
                   <div>
-                    <label style={{
-                      display: 'block',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
+                    <label style={{ 
+                      display: 'block', 
+                      fontSize: '0.875rem', 
+                      fontWeight: 600, 
                       color: '#374151',
                       marginBottom: '0.5rem'
                     }}>
@@ -555,7 +521,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
 
           {/* Student Picker */}
           <div className="riwayat-month-picker">
-            <button
+            <button 
               className="riwayat-month-picker-button"
               onClick={() => setShowStudentPicker(!showStudentPicker)}
             >
@@ -563,13 +529,13 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                 <Users size={20} color="#000000" />
                 <span>Siswa: {getSelectedStudentName()}</span>
               </div>
-              <ChevronDown
+              <ChevronDown 
                 size={24}
                 color="#000000"
-                style={{
+                style={{ 
                   transform: showStudentPicker ? 'rotate(180deg)' : 'rotate(0deg)',
                   transition: 'transform 0.2s'
-                }}
+                }} 
               />
             </button>
 
@@ -620,27 +586,33 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
           </div>
         </div>
 
-        {/* Statistics Cards */}
-        <div className="stats-container">
-          <div className="stat-card hadir">
-            <div className="stat-label">Hadir</div>
-            <div className="stat-value">{stats.hadir}</div>
-          </div>
-          <div className="stat-card izin">
-            <div className="stat-label">Izin</div>
-            <div className="stat-value">{stats.izin}</div>
-          </div>
-          <div className="stat-card sakit">
-            <div className="stat-label">Sakit</div>
-            <div className="stat-value">{stats.sakit}</div>
-          </div>
-          <div className="stat-card alpha">
-            <div className="stat-label">Alpha</div>
-            <div className="stat-value">{stats.alpha}</div>
-          </div>
-          <div className="stat-card pulang">
-            <div className="stat-label">Pulang</div>
-            <div className="stat-value">{stats.pulang}</div>
+        {/* Statistics Cards - FIXED dengan class name baru */}
+        <div className="pengurus-stats-wrapper">
+          <div className="pengurus-stats-grid">
+            <div className="pengurus-stat-box box-hadir">
+              <div className="pengurus-stat-title">Hadir</div>
+              <div className="pengurus-stat-number">{stats.hadir}</div>
+            </div>
+            <div className="pengurus-stat-box box-terlambat">
+              <div className="pengurus-stat-title">Terlambat</div>
+              <div className="pengurus-stat-number">{stats.terlambat}</div>
+            </div>
+            <div className="pengurus-stat-box box-izin">
+              <div className="pengurus-stat-title">Izin</div>
+              <div className="pengurus-stat-number">{stats.izin}</div>
+            </div>
+            <div className="pengurus-stat-box box-sakit">
+              <div className="pengurus-stat-title">Sakit</div>
+              <div className="pengurus-stat-number">{stats.sakit}</div>
+            </div>
+            <div className="pengurus-stat-box box-alpha">
+              <div className="pengurus-stat-title">Alpha</div>
+              <div className="pengurus-stat-number">{stats.alpha}</div>
+            </div>
+            <div className="pengurus-stat-box box-pulang">
+              <div className="pengurus-stat-title">Pulang</div>
+              <div className="pengurus-stat-number">{stats.pulang}</div>
+            </div>
           </div>
         </div>
 
@@ -674,8 +646,8 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                   </span>
                 </div>
                 <div className="table-cell">
-                  <button
-                    className="view-btn"
+                  <button 
+                    className="view-btn" 
                     onClick={() => handleViewDetail(record)}
                     title="Lihat Detail"
                   >
@@ -748,7 +720,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
               {selectedRecord.reason && (
                 <>
                   <div className="detail-divider"></div>
-
+                  
                   <div className="detail-row">
                     <span className="detail-label">Alasan:</span>
                     <span className="detail-value">{selectedRecord.reason}</span>
@@ -765,12 +737,12 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                     <div className="detail-value">
                       {selectedRecord.proofImage ? (
                         <div className="proof-image-container">
-                          <div
+                          <div 
                             className="proof-image-wrapper"
                             onClick={() => handleImageZoom(selectedRecord.proofImage)}
                           >
-                            <img
-                              src={selectedRecord.proofImage}
+                            <img 
+                              src={selectedRecord.proofImage} 
                               alt="Bukti dokumen"
                               className="proof-image"
                             />
@@ -794,8 +766,10 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                 <>
                   <div className="detail-divider"></div>
                   <p className="no-reason-text">
-                    {selectedRecord.status === 'Hadir'
-                      ? 'Siswa hadir tepat waktu'
+                    {selectedRecord.status === 'Hadir' 
+                      ? 'Siswa hadir tepat waktu' 
+                      : selectedRecord.status === 'Terlambat'
+                      ? 'Siswa datang terlambat'
                       : 'Tidak ada keterangan tambahan'}
                   </p>
                 </>
@@ -812,8 +786,8 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
             <button className="image-zoom-close" onClick={closeImageZoom}>
               <X size={24} />
             </button>
-            <img
-              src={zoomedImage}
+            <img 
+              src={zoomedImage} 
               alt="Bukti dokumen (diperbesar)"
               className="zoomed-image"
             />

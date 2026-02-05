@@ -795,30 +795,23 @@ const DashboardKelas = () => {
                   background: 'white',
                   border: '2px solid #d1d5db',
                   borderRadius: '16px',
-                  padding: '24px',
-                  marginBottom: '20px',
+                  padding: '16px',
+                  marginBottom: '16px',
                   color: '#1f2937',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between'
                 }}>
                   <div>
-                    <div style={{ fontSize: '14px', opacity: 0.9, marginBottom: '4px' }}>Total Mata Pelajaran</div>
-                    <div style={{ fontSize: '40px', fontWeight: 'bold' }}>{totalSubjects}</div>
+                    <div style={{ fontSize: '13px', opacity: 0.9, marginBottom: '4px' }}>Total Mata Pelajaran</div>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{totalSubjects}</div>
                   </div>
-                  <BookOpen size={64} style={{ opacity: 0.8 }} />
+                  <BookOpen size={48} style={{ opacity: 0.8 }} />
                 </div>
 
                 <button
                   onClick={() => setShowSubjects(true)}
-                  className="btn-action"
-                  style={{
-                    width: '100%',
-                    background: 'linear-gradient(135deg, #1e3a8a)',
-                    color: 'white',
-                    border: 'none',
-                    boxShadow: '0 4px 12px rgba(30, 58, 138, 0.3)'
-                  }}
+                  className="btn-lihat-jadwal"
                 >
                   <BookOpen size={20} />
                   <span>Lihat Jadwal Kelas</span>

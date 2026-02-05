@@ -737,14 +737,7 @@ const Dashboard = () => {
 
                 <button
                   onClick={() => setShowSubjects(true)}
-                  className="siswa-btn-aksi"
-                  style={{
-                    width: '100%',
-                    background: 'linear-gradient(135deg, #1e3a8a)',
-                    color: 'white',
-                    border: 'none',
-                    boxShadow: '0 4px 12px rgba(30, 58, 138, 0.3)'
-                  }}
+                  className="siswa-btn-lihat-jadwal"
                 >
                   <BookOpen size={20} />
                   <span>Lihat Jadwal Kelas</span>

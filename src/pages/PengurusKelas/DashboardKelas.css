@@ -49,6 +49,8 @@
 
 .btn-logout {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--danger);
   color: white;
   border: none;
@@ -70,6 +72,13 @@
   background: #c82333;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+.btn-logout svg {
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  flex-shrink: 0;
 }
 
 .profile-section {
@@ -208,6 +217,29 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.btn-lihat-jadwal {
+  width: 100%;
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-lihat-jadwal:hover {
+  background: linear-gradient(135deg, #1e3a8a, #172554);
+  transform: translateY(-2px);
+}
+
 .kehadiran-title {
   font-size: 1.4rem;
   font-weight: 700;
@@ -215,6 +247,49 @@
   margin-bottom: var(--spacing-lg);
   padding-left: var(--spacing-md);
   border-left: 4px solid var(--primary);
+}
+
+.datetime-info-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.datetime-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.time-range-display {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.time-display-box {
+  flex: 1;
+  background: white;
+  border: 2px solid #d1d5db;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm);
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 100px;
+}
+
+.time-range-separator {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #9ca3af;
 }
 
 /* Extracted Chart Styles */

@@ -31,7 +31,7 @@ function KehadiranGuruIndex() {
         kelas: 'XI RPL 2'
       },
       jam: [
-        'Hadir', 'Hadir', 'Izin', 'Izin', 'Hadir',
+        'Hadir', 'Terlambat', 'Izin', 'Izin', 'Hadir',
         'Sakit', 'Sakit', 'Alpha', 'Alpha', 'Alpha'
       ]
     }
@@ -49,6 +49,7 @@ function KehadiranGuruIndex() {
 
   const statusConfig = {
     Hadir: { bg: 'status-hadir', icon: 'fa-check-circle' },
+    Terlambat: { bg: 'status-terlambat', icon: 'fa-clock' },
     Izin: { bg: 'status-izin', icon: 'fa-info-circle' },
     Sakit: { bg: 'status-sakit', icon: 'fa-heartbeat' },
     Alpha: { bg: 'status-alpha', icon: 'fa-times-circle' },
@@ -75,6 +76,7 @@ function KehadiranGuruIndex() {
   const hitungStatus = (jamArray) => {
     const count = {
       Hadir: 0,
+      Terlambat: 0,
       Alpha: 0,
       Izin: 0,
       Sakit: 0
@@ -311,6 +313,10 @@ function KehadiranGuruIndex() {
           <div className="legend-item">
             <span className="legend-dot legend-hadir"></span>
             <span className="legend-text">Hadir</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot legend-terlambat"></span>
+            <span className="legend-text">Terlambat</span>
           </div>
           <div className="legend-item">
             <span className="legend-dot legend-alpha"></span>
