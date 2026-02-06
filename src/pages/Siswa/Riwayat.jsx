@@ -4,153 +4,79 @@ import { Calendar, Eye, X, ZoomIn } from 'lucide-react';
 import './Riwayat.css';
 import NavbarSiswa from '../../components/Siswa/NavbarSiswa';
 
-// Data Dummy dengan alasan lengkap dan foto bukti - termasuk status Terlambat
-const dummyAttendanceRecords = [
-  {
-    recordDate: '2026-01-25',
-    date: '25/01/26',
-    period: '1-4',
-    subject: 'Matematika',
-    teacher: 'Alifah Diantebas Andra S.pd',
-    status: 'Hadir',
-    statusColor: 'status-hadir',
-    reason: null,
-    proofDocument: null,
-    proofImage: null
-  },
-  {
-    recordDate: '2026-01-26',
-    date: '26/01/26',
-    period: '5-8',
-    subject: 'Bahasa Indonesia',
-    teacher: 'Siti Nurhaliza S.pd',
-    status: 'Izin',
-    statusColor: 'status-izin',
-    reason: 'Keperluan keluarga mendadak',
-    proofDocument: 'Surat izin orang tua',
-    proofImage: 'https://via.placeholder.com/400x600/3b82f6/ffffff?text=Surat+Izin+Orang+Tua'
-  },
-  {
-    recordDate: '2026-01-27',
-    date: '27/01/26',
-    period: '1-4',
-    subject: 'Fisika',
-    teacher: 'Budi Santoso S.pd',
-    status: 'Sakit',
-    statusColor: 'status-sakit',
-    reason: 'Demam dan flu',
-    proofDocument: 'Surat keterangan dokter',
-    proofImage: 'https://via.placeholder.com/400x600/22c55e/ffffff?text=Surat+Keterangan+Dokter'
-  },
-  {
-    recordDate: '2026-01-28',
-    date: '28/01/26',
-    period: '5-8',
-    subject: 'Kimia',
-    teacher: 'Dr. Ani Widiastuti',
-    status: 'Pulang',
-    statusColor: 'status-pulang',
-    reason: 'Merasa tidak enak badan saat jam pelajaran ke-6',
-    proofDocument: 'Surat izin dari guru BK',
-    proofImage: 'https://via.placeholder.com/400x600/a855f7/ffffff?text=Surat+Izin+Guru+BK'
-  },
-  {
-    recordDate: '2026-01-29',
-    date: '29/01/26',
-    period: '1-4',
-    subject: 'Sejarah',
-    teacher: 'Ahmad Fauzi S.pd',
-    status: 'Alpha',
-    statusColor: 'status-alpha',
-    reason: null,
-    proofDocument: null,
-    proofImage: null
-  },
-  {
-    recordDate: '2026-01-30',
-    date: '30/01/26',
-    period: '1-4',
-    subject: 'Biologi',
-    teacher: 'Nur Aini S.pd',
-    status: 'Terlambat',
-    statusColor: 'status-terlambat',
-    reason: 'Terjebak macet di jalan raya',
-    proofDocument: null,
-    proofImage: null
-  },
-  {
-    recordDate: '2026-01-31',
-    date: '31/01/26',
-    period: '1-4',
-    subject: 'Matematika',
-    teacher: 'Alifah Diantebas Andra S.pd',
-    status: 'Hadir',
-    statusColor: 'status-hadir',
-    reason: null,
-    proofDocument: null,
-    proofImage: null
-  },
-  {
-    recordDate: '2026-02-01',
-    date: '01/02/26',
-    period: '5-8',
-    subject: 'Pemrograman Web',
-    teacher: 'Eko Prasetyo S.Kom',
-    status: 'Hadir',
-    statusColor: 'status-hadir',
-    reason: null,
-    proofDocument: null,
-    proofImage: null
-  },
-  {
-    recordDate: '2026-02-03',
-    date: '03/02/26',
-    period: '1-4',
-    subject: 'Bahasa Inggris',
-    teacher: 'Sarah Johnson M.pd',
-    status: 'Terlambat',
-    statusColor: 'status-terlambat',
-    reason: 'Bangun kesiangan',
-    proofDocument: null,
-    proofImage: null
-  },
-  {
-    recordDate: '2026-03-15',
-    date: '15/03/26',
-    period: '1-4',
-    subject: 'Basis Data',
-    teacher: 'Linda Wijaya S.Kom',
-    status: 'Izin',
-    statusColor: 'status-izin',
-    reason: 'Mengikuti lomba olimpiade matematika tingkat provinsi',
-    proofDocument: 'Surat tugas dari sekolah',
-    proofImage: 'https://via.placeholder.com/400x600/f97316/ffffff?text=Surat+Tugas+Sekolah'
-  },
-  {
-    recordDate: '2026-05-10',
-    date: '10/05/26',
-    period: '5-8',
-    subject: 'Bahasa Inggris',
-    teacher: 'Sarah Johnson M.pd',
-    status: 'Sakit',
-    statusColor: 'status-sakit',
-    reason: 'Sakit perut akut',
-    proofDocument: 'Surat keterangan dokter RS Saiful Anwar',
-    proofImage: 'https://via.placeholder.com/400x600/ef4444/ffffff?text=Surat+Dokter+RS'
-  }
-];
+// Data Dummy Removed
+const dummyAttendanceRecords = [];
 
-function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
+function Riwayat() {
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   // State untuk date range
-  const [startDate, setStartDate] = useState('2026-01-01');
-  const [endDate, setEndDate] = useState('2026-01-31');
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
+  // Calculate end date (e.g., end of month or same day) - let's set it to today for now
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+
+  // Need to adjust default range? Maybe last 30 days.
+  useEffect(() => {
+    const start = new Date();
+    start.setDate(start.getDate() - 30);
+    setStartDate(start.toISOString().split('T')[0]);
+  }, []);
+
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [zoomedImage, setZoomedImage] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    fetchAttendance();
+  }, [startDate, endDate]);
+
+  const fetchAttendance = async () => {
+    try {
+      setLoading(true);
+      const { default: attendanceService } = await import('../../services/attendance');
+      const { STATUS_BACKEND_TO_FRONTEND, STATUS_COLORS } = await import('../../utils/statusMapping');
+
+      // Use getMyAttendance endpoint
+      // It supports 'from' and 'to' query params
+      const response = await attendanceService.getMyAttendance({
+        from: startDate,
+        to: endDate
+      });
+
+      const data = response.data || response; // Handle pagination if needed (data.data)
+      const records = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+
+      const mapped = records.map(r => {
+        const dateObj = new Date(r.date);
+        const displayDate = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getFullYear()).slice(-2)}`;
+
+        const statusLabel = STATUS_BACKEND_TO_FRONTEND[r.status] || r.status;
+        const statusColor = STATUS_COLORS[r.status] || 'status-hadir';
+
+        return {
+          id: r.id,
+          recordDate: r.date.split('T')[0], // YYYY-MM-DD
+          date: displayDate, // DD/MM/YY
+          period: r.schedule ? `${r.schedule.start_time?.slice(0, 5)}-${r.schedule.end_time?.slice(0, 5)}` : '-',
+          subject: r.schedule?.subject_name || r.schedule?.class?.label || '-', // Fallback
+          teacher: r.schedule?.teacher?.user?.name || '-',
+          status: statusLabel,
+          statusColor: statusColor,
+          reason: r.reason,
+          proofDocument: null, // Backend doesn't seem to return proof url in simple index?
+          proofImage: null
+        };
+      });
+      setAttendanceRecords(mapped);
+
+    } catch (e) {
+      console.error("Failed to fetch attendance:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Format tanggal untuk ditampilkan dengan format dd/mm/yy
   const formatDisplayDate = (dateString) => {
@@ -165,7 +91,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
   const handleStartDateChange = (e) => {
     const newStartDate = e.target.value;
     setStartDate(newStartDate);
-    
+
     // Jika tanggal akhir lebih kecil dari tanggal awal yang baru, update tanggal akhir
     if (new Date(endDate) < new Date(newStartDate)) {
       setEndDate(newStartDate);
@@ -181,26 +107,9 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
     }
   };
 
-  // Filter records berdasarkan rentang tanggal
-  const filterByDateRange = (records) => {
-    return records.filter(record => {
-      if (record.recordDate) {
-        const recordDate = new Date(record.recordDate);
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        
-        // Set waktu ke 00:00:00 untuk perbandingan yang akurat
-        recordDate.setHours(0, 0, 0, 0);
-        start.setHours(0, 0, 0, 0);
-        end.setHours(0, 0, 0, 0);
-        
-        return recordDate >= start && recordDate <= end;
-      }
-      return false;
-    });
-  };
-
-  const filteredRecords = filterByDateRange(attendanceRecords);
+  // Filter logic is now handled by API params (startDate, endDate)
+  // But strictly filtering:
+  const filteredRecords = attendanceRecords;
 
   // Hitung statistik berdasarkan data yang difilter - termasuk terlambat
   const calculateStats = () => {
@@ -267,9 +176,9 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
               className="date-inputt"
             />
           </div>
-          
+
           <div className="date-separator">—</div>
-          
+
           <div className="date-inputt-group">
             <label htmlFor="endDate">
               <Calendar size={18} />
@@ -344,8 +253,8 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                   </span>
                 </div>
                 <div className="table-cell">
-                  <button 
-                    className="view-btn" 
+                  <button
+                    className="view-btn"
                     onClick={() => handleViewDetail(record)}
                     title="Lihat Detail"
                   >
@@ -406,7 +315,7 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
               {selectedRecord.reason && (
                 <>
                   <div className="detail-divider"></div>
-                  
+
                   <div className="detail-row">
                     <span className="detail-label">Alasan:</span>
                     <span className="detail-value">{selectedRecord.reason}</span>
@@ -423,12 +332,12 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                     <div className="detail-value">
                       {selectedRecord.proofImage ? (
                         <div className="proof-image-container">
-                          <div 
+                          <div
                             className="proof-image-wrapper"
                             onClick={() => handleImageZoom(selectedRecord.proofImage)}
                           >
-                            <img 
-                              src={selectedRecord.proofImage} 
+                            <img
+                              src={selectedRecord.proofImage}
                               alt="Bukti dokumen"
                               className="proof-image"
                             />
@@ -452,11 +361,11 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
                 <>
                   <div className="detail-divider"></div>
                   <p className="no-reason-text">
-                    {selectedRecord.status === 'Hadir' 
-                      ? 'Siswa hadir tepat waktu' 
+                    {selectedRecord.status === 'Hadir'
+                      ? 'Siswa hadir tepat waktu'
                       : selectedRecord.status === 'Terlambat'
-                      ? 'Siswa datang terlambat'
-                      : 'Tidak ada keterangan tambahan'}
+                        ? 'Siswa datang terlambat'
+                        : 'Tidak ada keterangan tambahan'}
                   </p>
                 </>
               )}
@@ -472,8 +381,8 @@ function Riwayat({ attendanceRecords = dummyAttendanceRecords }) {
             <button className="image-zoom-close" onClick={closeImageZoom}>
               <X size={24} />
             </button>
-            <img 
-              src={zoomedImage} 
+            <img
+              src={zoomedImage}
               alt="Bukti dokumen (diperbesar)"
               className="zoomed-image"
             />

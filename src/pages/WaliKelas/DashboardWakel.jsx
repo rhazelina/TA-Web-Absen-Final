@@ -4,6 +4,7 @@ import './DashboardWakel.css';
 import NavbarWakel from '../../components/WaliKelas/NavbarWakel';
 
 import CustomAlert from '../../components/Common/CustomAlert';
+import { getHomeroomDashboard } from '../../services/attendance';
 
 const DashboardWakel = () => {
   const navigate = useNavigate();
@@ -18,55 +19,20 @@ const DashboardWakel = () => {
     message: ''
   });
 
-  // Data dummy wali kelas
+  // Data Initial State (Loading)
   const [waliKelas, setWaliKelas] = useState({
-    nama: "Budi Santoso, S.Pd",
-    nip: "198505152010011023",
-    role: "Wali Kelas XII RPL 1"
+    nama: "Loading...",
+    nip: "",
+    role: "Wali Kelas"
   });
 
-  // ... (rest of the state and useEffects remain same until handleLogout)
+  const [scheduleData, setScheduleData] = useState([]);
 
-  // Data dummy jadwal
-  const [scheduleData, setScheduleData] = useState([
-    {
-      id: 1,
-      mataPelajaran: "Pemrograman Web",
-      kelas: "XII RPL 1",
-      jamKe: 1,
-      waktu: "07:00 - 08:30"
-    },
-    {
-      id: 2,
-      mataPelajaran: "Basis Data",
-      kelas: "XII RPL 2",
-      jamKe: 3,
-      waktu: "09:00 - 10:30"
-    },
-    {
-      id: 3,
-      mataPelajaran: "Pemrograman Berorientasi Objek",
-      kelas: "XI RPL 1",
-      jamKe: 5,
-      waktu: "11:00 - 12:30"
-    },
-    {
-      id: 4,
-      mataPelajaran: "Jaringan Komputer",
-      kelas: "XII TKJ 1",
-      jamKe: 7,
-      waktu: "13:00 - 14:30"
-    }
-  ]);
-
-  // Data dummy statistik
   const [stats, setStats] = useState({
-    totalKelas: 4,
-    totalSiswa: 36
+    totalKelas: 0,
+    totalSiswa: 0
   });
 
-  const [startTime, setStartTime] = useState("07:00:00");
-  const [endTime, setEndTime] = useState("15:00:00");
   const [completedAbsensi, setCompletedAbsensi] = useState(new Set());
 
   useEffect(() => {
@@ -76,10 +42,46 @@ const DashboardWakel = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Simulasi fetch data dari backend
+  // Fetch API Data
   useEffect(() => {
-    // Data sudah di-set sebagai dummy data di state initialization
-    console.log('Data dummy loaded:', { waliKelas, scheduleData, stats });
+    const fetchDashboardData = async () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+        // Fetch dashboard summary
+        const dashboardData = await getHomeroomDashboard();
+
+        // Update states
+        setWaliKelas({
+          nama: userData.name || 'Guru',
+          nip: userData.nip || '-',
+          role: `Wali Kelas ${dashboardData.className || ''}`
+        });
+
+        // Map schedules from API
+        if (dashboardData.schedules) {
+          const formattedSchedules = dashboardData.schedules.map(s => ({
+            id: s.id,
+            mataPelajaran: s.subject_name,
+            kelas: s.class_name,
+            jamKe: s.time_slot,
+            waktu: `${s.start_time} - ${s.end_time}`
+          }));
+          setScheduleData(formattedSchedules);
+        }
+
+        // Update stats
+        setStats({
+          totalKelas: dashboardData.total_classes || 0,
+          totalSiswa: dashboardData.total_students || 0
+        });
+
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
   const formatTime = (date) => {

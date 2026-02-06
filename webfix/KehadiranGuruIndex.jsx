@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './KehadiranGuruIndex.css';
 import NavbarWaka from '../../components/Waka/NavbarWaka';
@@ -6,7 +6,7 @@ import { FaCalendar, FaClock, FaFileExport, FaFilePdf, FaFileExcel, FaEye } from
 
 function KehadiranGuruIndex() {
   const navigate = useNavigate();
-  const [kehadirans] = useState([
+  const [kehadirans, setKehadirans] = useState([
     {
       id: 1,
       guru: {
@@ -47,11 +47,55 @@ function KehadiranGuruIndex() {
     new Date().toISOString().split('T')[0]
   );
 
+  const [deleteModal, setDeleteModal] = useState({ show: false, id: null, namaGuru: '' });
+  const [qrModal, setQrModal] = useState({ show: false, kodeGuru: '', namaGuru: '' });
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+
+  const statusConfig = {
+    Hadir: { bg: 'status-hadir', icon: 'fa-check-circle' },
+    Terlambat: { bg: 'status-terlambat', icon: 'fa-clock' },
+    Izin: { bg: 'status-izin', icon: 'fa-info-circle' },
+    Sakit: { bg: 'status-sakit', icon: 'fa-heartbeat' },
+    Alpha: { bg: 'status-alpha', icon: 'fa-times-circle' },
+    Pulang: { bg: 'status-pulang', icon: 'fas fa-sign-out-alt' },
+    'Belum Absen': { bg: 'status-belum', icon: 'fa-question-circle' },
+    'Tidak Ada Jam Mengajar': { bg: 'status-tidak-mengajar', icon: 'fa-minus-circle' }
+  };
 
 
+  const handleDelete = (id) => {
+    setKehadirans(prev => prev.filter(k => k.id !== id));
+    setDeleteModal({ show: false, id: null, namaGuru: '' });
+  };
 
+  useEffect(() => {
+    const esc = (e) => {
+      if (e.key === 'Escape') {
+        setDeleteModal({ show: false, id: null, namaGuru: '' });
+        setQrModal({ show: false, kodeGuru: '', namaGuru: '' });
+      }
+    };
+    document.addEventListener('keydown', esc);
+    return () => document.removeEventListener('keydown', esc);
+  }, []);
 
+  const hitungStatus = (jamArray) => {
+    const count = {
+      Hadir: 0,
+      Terlambat: 0,
+      Alpha: 0,
+      Izin: 0,
+      Sakit: 0
+    };
 
+    jamArray.forEach(j => {
+      if (count[j] !== undefined) count[j]++;
+    });
+
+    return Object.keys(count).reduce((a, b) =>
+      count[a] > count[b] ? a : b
+    );
+  };
 
   const [showExport, setShowExport] = useState(false);
 
@@ -180,7 +224,7 @@ function KehadiranGuruIndex() {
           </div>
           <div className="legend-item">
             <span className="legend-dot legend-tidak-mengajar"></span>
-            <span className="legend-text">Tidak Mengajar</span>
+            <span className="legend-text">Tidak Ada Jam Mengajar</span>
           </div>
 
         </div>
@@ -226,7 +270,7 @@ function KehadiranGuruIndex() {
 
             <tbody>
               {kehadirans.map((k, i) => {
-                // const statusAkhir = hitungStatus(k.jam);
+                const statusAkhir = hitungStatus(k.jam);
 
                 return (
                   <tr key={k.id}>
@@ -246,7 +290,7 @@ function KehadiranGuruIndex() {
                     </td>
 
                     {k.jam.map((j, idx) => {
-                      const status = j && j !== '' ? j : 'Tidak Mengajar';
+                      const status = j && j !== '' ? j : 'Tidak Ada Jam Mengajar';
                       return (
                         <td key={idx} style={{ textAlign: 'center' }}>
                           <span className={`jam-box jam-${status.toLowerCase().replace(' ', '-')}`}></span>

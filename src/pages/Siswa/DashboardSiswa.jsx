@@ -5,34 +5,10 @@ import NavbarSiswa from '../../components/Siswa/NavbarSiswa';
 import CustomAlert from '../../components/Common/CustomAlert';
 import jadwalImage from '../../assets/jadwal.png'; // IMPORT GAMBAR JADWAL
 import QRScanButton from '../../components/Siswa/QRScanButton';
+import { getMyAttendanceSummary } from '../../services/attendance';
 
-// Sample Data
-const sampleData = {
-  profile: {
-    name: 'Budi Santoso',
-    kelas: 'XII RPL 2',
-    id: '00123456'
-  },
-  // GAMBAR JADWAL DARI IMPORT
-  scheduleImage: jadwalImage, // Gambar jadwal yang sudah di-import
-  // Statistik Mingguan - Kehadiran siswa per hari dalam seminggu
-  weeklyStats: {
-    hadir: 5,
-    izin: 0,
-    sakit: 0,
-    alpha: 0
-  },
-  // Tren Bulanan - Persentase kehadiran pribadi siswa per bulan
-  // Contoh: Dari 20 hari efektif, hadir 18 hari = 90%
-  monthlyTrend: [
-    { month: 'Jan', percentage: 90, hadir: 18, total: 20 },
-    { month: 'Feb', percentage: 85, hadir: 17, total: 20 },
-    { month: 'Mar', percentage: 95, hadir: 19, total: 20 },
-    { month: 'Apr', percentage: 80, hadir: 16, total: 20 },
-    { month: 'Mei', percentage: 100, hadir: 20, total: 20 },
-    { month: 'Jun', percentage: 90, hadir: 18, total: 20 }
-  ]
-};
+// Static data for schedule image
+const scheduleImage = jadwalImage;
 
 // Subjects Modal - Menampilkan gambar jadwal
 const SubjectsModal = ({ isOpen, onClose, scheduleImage = null }) => {
@@ -80,11 +56,29 @@ const SubjectsModal = ({ isOpen, onClose, scheduleImage = null }) => {
 };
 
 // Line Chart Component - Untuk tren kehadiran bulanan pribadi siswa
-const LineChart = ({ data }) => {
+const LineChart = ({ data = [] }) => {
   const [hoveredPoint, setHoveredPoint] = useState(null);
-  const chartHeight = 240;
+
+  // Guard: return empty state if no data
+  if (!data || data.length === 0) {
+    return (
+      <div style={{
+        width: '100%',
+        height: '300px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#9ca3af',
+        fontSize: '14px'
+      }}>
+        Loading data...
+      </div>
+    );
+  }
+
   const chartWidth = 600;
-  const padding = { top: 30, right: 30, bottom: 40, left: 50 };
+  const chartHeight = 300;
+  const padding = { top: 20, right: 20, bottom: 40, left: 50 };
 
   const maxValue = Math.max(...data.map(d => d.percentage));
   const minValue = Math.min(...data.map(d => d.percentage));
@@ -285,10 +279,28 @@ const LineChart = ({ data }) => {
   );
 };
 
-// Donut Chart Component - Untuk statistik mingguan
-const DonutChart = ({ data }) => {
+// Donut Chart Component - Untuk statistik kehadiran mingguan
+const DonutChart = ({ data = {} }) => {
   const [hoveredSegment, setHoveredSegment] = useState(null);
-  const total = Object.values(data).reduce((sum, val) => sum + val, 0);
+
+  // Guard: check if data is valid
+  if (!data || typeof data !== 'object') {
+    return (
+      <div style={{
+        width: '100%',
+        height: '300px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#9ca3af',
+        fontSize: '14px'
+      }}>
+        Loading data...
+      </div>
+    );
+  }
+
+  const total = Object.values(data).reduce((sum, val) => sum + (val || 0), 0);
 
   if (total === 0) {
     return (
@@ -572,19 +584,84 @@ const Dashboard = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [profileImage, setProfileImage] = useState(null);
-
-  // Custom Alert State
   const [alertState, setAlertState] = useState({
     show: false,
-    type: 'confirm',
+    type: '',
     title: '',
     message: '',
     action: null
   });
 
+  // API data states
+  const [profile, setProfile] = useState({ name: 'Loading...', kelas: '', id: '' });
+  const [weeklyStats, setWeeklyStats] = useState({ hadir: 0, izin: 0, sakit: 0, alpha: 0 });
+  const [monthlyTrend, setMonthlyTrend] = useState([]);
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentDateTime(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Fetch attendance summary from API
+  useEffect(() => {
+    const fetchAttendanceSummary = async () => {
+      try {
+        const response = await getMyAttendanceSummary();
+        const data = response.data;
+
+        // Set profile from user data
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        setProfile({
+          name: userData.name || 'Siswa',
+          kelas: userData.class_name || '',
+          id: userData.nisn || ''
+        });
+
+        // Transform status summary to weekly stats
+        if (data.status_summary) {
+          const stats = data.status_summary.reduce((acc, item) => {
+            const status = item.status.toLowerCase();
+            if (status === 'present') acc.hadir = item.total;
+            else if (status === 'excused' || status === 'izin') acc.izin = item.total;
+            else if (status === 'sick' || status === 'sakit') acc.sakit = item.total;
+            else if (status === 'absent' || status === 'alpha') acc.alpha = item.total;
+            return acc;
+          }, { hadir: 0, izin: 0, sakit: 0, alpha: 0 });
+          setWeeklyStats(stats);
+        }
+
+        // Transform daily summary to monthly trend
+        if (data.daily_summary) {
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          const monthlyData = {};
+
+          data.daily_summary.forEach((item) => {
+            const date = new Date(item.day);
+            const monthKey = monthNames[date.getMonth()];
+
+            if (!monthlyData[monthKey]) {
+              monthlyData[monthKey] = { month: monthKey, hadir: 0, total: 0 };
+            }
+
+            monthlyData[monthKey].total += item.total;
+            if (item.status.toLowerCase() === 'present') {
+              monthlyData[monthKey].hadir += item.total;
+            }
+          });
+
+          // Calculate percentage and take last 6 months
+          const monthlyArray = Object.values(monthlyData).map(m => ({
+            ...m,
+            percentage: m.total > 0 ? Math.round((m.hadir / m.total) * 100) : 0
+          }));
+          setMonthlyTrend(monthlyArray.slice(-6));
+        }
+      } catch (error) {
+        console.error('Error fetching attendance summary:', error);
+      }
+    };
+
+    fetchAttendanceSummary();
   }, []);
 
   const formatDate = () => {
@@ -678,9 +755,9 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
-            <h1 className="siswa-nama-profil">{sampleData.profile.name}</h1>
-            <h3 className="siswa-kelas-profil">{sampleData.profile.kelas}</h3>
-            <p className="siswa-id-profil">{sampleData.profile.id}</p>
+            <h1 className="siswa-nama-profil">{profile.name}</h1>
+            <h3 className="siswa-kelas-profil">{profile.kelas}</h3>
+            <p className="siswa-id-profil">{profile.id}</p>
           </div>
 
           <button className="btn-logout" onClick={handleLogoutClick}>
@@ -770,7 +847,7 @@ const Dashboard = () => {
                       margin: 0
                     }}>Tren Kehadiran Bulanan</h3>
                   </div>
-                  <LineChart data={sampleData.monthlyTrend} />
+                  <LineChart data={monthlyTrend} />
                   <div style={{
                     marginTop: '20px',
                     padding: '16px',
@@ -823,7 +900,7 @@ const Dashboard = () => {
                     padding: '10px'
                   }}>
                     <div style={{ flex: '0 0 auto' }}>
-                      <DonutChart data={sampleData.weeklyStats} />
+                      <DonutChart data={weeklyStats} />
                     </div>
 
                     <div style={{
@@ -833,10 +910,10 @@ const Dashboard = () => {
                       flex: '1'
                     }}>
                       {[
-                        { label: 'Hadir', value: sampleData.weeklyStats.hadir, color: '#22c55e' },
-                        { label: 'Izin', value: sampleData.weeklyStats.izin, color: '#eab308' },
-                        { label: 'Sakit', value: sampleData.weeklyStats.sakit, color: '#8b5cf6' },
-                        { label: 'Alpha', value: sampleData.weeklyStats.alpha, color: '#ef4444' }
+                        { label: 'Hadir', value: weeklyStats.hadir, color: '#22c55e' },
+                        { label: 'Izin', value: weeklyStats.izin, color: '#eab308' },
+                        { label: 'Sakit', value: weeklyStats.sakit, color: '#8b5cf6' },
+                        { label: 'Alpha', value: weeklyStats.alpha, color: '#ef4444' }
                       ].map((stat, idx) => (
                         <div key={idx} style={{
                           display: 'flex',
@@ -874,13 +951,13 @@ const Dashboard = () => {
         <SubjectsModal
           isOpen={showSubjects}
           onClose={() => setShowSubjects(false)}
-          scheduleImage={sampleData.scheduleImage}
+          scheduleImage={scheduleImage}
         />
 
         <ProfileModal
           isOpen={showProfile}
           onClose={() => setShowProfile(false)}
-          profile={sampleData.profile}
+          profile={profile}
           currentProfileImage={profileImage}
           onUpdateProfileImage={handleUpdateProfileImage}
           onLogout={handleLogoutClick}

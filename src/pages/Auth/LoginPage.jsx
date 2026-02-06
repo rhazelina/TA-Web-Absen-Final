@@ -99,6 +99,8 @@ const LoginPage = () => {
       localStorage.setItem('userRole', role);
       localStorage.setItem('userIdentifier', formData.identifier);
       localStorage.setItem('userName', user.name);
+      // CRITICAL FIX: Store complete userData object for dashboards
+      localStorage.setItem('userData', JSON.stringify(user));
 
       // Navigate ke dashboard
       navigate(config.dashboard);

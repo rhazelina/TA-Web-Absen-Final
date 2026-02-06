@@ -8,12 +8,12 @@ import { FaChartBar } from 'react-icons/fa6';
 function KehadiranSiswaShow() {
 
   const [showDetailModal, setShowDetailModal] = useState(false);
-const [detailSiswa, setDetailSiswa] = useState(null);
+  const [detailSiswa, setDetailSiswa] = useState(null);
 
-const handleDetailClick = (siswa) => {
-  setDetailSiswa(siswa);
-  setShowDetailModal(true);
-};
+  const handleDetailClick = (siswa) => {
+    setDetailSiswa(siswa);
+    setShowDetailModal(true);
+  };
 
   const { id } = useParams();
   console.log(id);
@@ -114,7 +114,7 @@ const handleDetailClick = (siswa) => {
       setKelas(kelasData[id]);
       setLoading(false);
     }, 500);
-  }, [id]);
+  }, [id, kelasData, mockSiswaList]);
 
   const handleEditClick = (siswa) => {
     setSelectedSiswa(siswa);
@@ -273,24 +273,24 @@ const handleDetailClick = (siswa) => {
                         </span>
                       </td>
                       <td className="td-tengah">
-  <div className="wrapper-aksi">
-    <button
-      className="tombol-edit-status"
-      onClick={() => handleEditClick(siswa)}
-      title="Edit Status"
-    >
-      <FaEdit />
-    </button>
+                        <div className="wrapper-aksi">
+                          <button
+                            className="tombol-edit-status"
+                            onClick={() => handleEditClick(siswa)}
+                            title="Edit Status"
+                          >
+                            <FaEdit />
+                          </button>
 
-    <button
-      className="tombol-detail-status"
-      onClick={() => handleDetailClick(siswa)}
-      title="Detail Kehadiran"
-    >
-      <FaEye />
-    </button>
-  </div>
-</td>
+                          <button
+                            className="tombol-detail-status"
+                            onClick={() => handleDetailClick(siswa)}
+                            title="Detail Kehadiran"
+                          >
+                            <FaEye />
+                          </button>
+                        </div>
+                      </td>
 
                     </tr>
                   ))}
@@ -375,89 +375,89 @@ const handleDetailClick = (siswa) => {
           </div>
         </div>
 
-        
+
       )}
       {showDetailModal && detailSiswa && (
-  <div className="overlay-modal">
-    <div className="modal-detail">
-      <div className="modal-detail-header">
-        <FaClipboardCheck />
-        <h3>Detail Kehadiran</h3>
-        <button onClick={() => setShowDetailModal(false)}>
-          <FaTimes />
-        </button>
-      </div>
+        <div className="overlay-modal">
+          <div className="modal-detail">
+            <div className="modal-detail-header">
+              <FaClipboardCheck />
+              <h3>Detail Kehadiran</h3>
+              <button onClick={() => setShowDetailModal(false)}>
+                <FaTimes />
+              </button>
+            </div>
 
-      <div className="modal-detail-body">
-        <div className="detail-row">
-          <span>Tanggal:</span>
-          <strong>25-01-2026</strong>
+            <div className="modal-detail-body">
+              <div className="detail-row">
+                <span>Tanggal:</span>
+                <strong>25-01-2026</strong>
+              </div>
+
+              <div className="detail-row">
+                <span>Jam Pelajaran:</span>
+                <strong>1–4</strong>
+              </div>
+
+              <div className="detail-row">
+                <span>Mata Pelajaran:</span>
+                <strong>{detailSiswa.mata_pelajaran}</strong>
+              </div>
+
+              <div className="detail-row">
+                <span>Nama Siswa:</span>
+                <strong>{detailSiswa.nama}</strong>
+              </div>
+
+              <div className="detail-row">
+                <span>Status:</span>
+                <span className={`badge-status status-${detailSiswa.status.toLowerCase()}`}>
+                  {detailSiswa.status}
+                </span>
+              </div>
+
+              <div className="detail-row">
+                <span>Keterangan:</span>
+
+                {detailSiswa.status === 'Hadir' && (
+                  <strong className="teks-hadir">
+                    Siswa hadir dan mengikuti pembelajaran
+                  </strong>
+                )}
+
+                {detailSiswa.status === 'Alpha' && (
+                  <strong className="teks-alpha">
+                    Tidak hadir tanpa keterangan
+                  </strong>
+                )}
+
+                {['Izin', 'Sakit', 'Pulang'].includes(detailSiswa.status) && (
+                  <strong>
+                    Demam dan flu
+                  </strong>
+                )}
+              </div>
+
+
+              <div className="detail-foto">
+                <p>Bukti Kehadiran</p>
+
+                {detailSiswa.status === 'Hadir' ? (
+                  <div className="bukti-hadir">
+                    <FaClipboardCheck />
+                    <span>Hadir & tercatat di sistem</span>
+                  </div>
+                ) : (
+                  <div className="wrapper-foto">
+                    <div className="foto-kosong"></div>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
         </div>
-
-        <div className="detail-row">
-          <span>Jam Pelajaran:</span>
-          <strong>1–4</strong>
-        </div>
-
-        <div className="detail-row">
-          <span>Mata Pelajaran:</span>
-          <strong>{detailSiswa.mata_pelajaran}</strong>
-        </div>
-
-        <div className="detail-row">
-          <span>Nama Siswa:</span>
-          <strong>{detailSiswa.nama}</strong>
-        </div>
-
-        <div className="detail-row">
-          <span>Status:</span>
-          <span className={`badge-status status-${detailSiswa.status.toLowerCase()}`}>
-            {detailSiswa.status}
-          </span>
-        </div>
-
-        <div className="detail-row">
-  <span>Keterangan:</span>
-
-  {detailSiswa.status === 'Hadir' && (
-    <strong className="teks-hadir">
-      Siswa hadir dan mengikuti pembelajaran
-    </strong>
-  )}
-
-  {detailSiswa.status === 'Alpha' && (
-    <strong className="teks-alpha">
-      Tidak hadir tanpa keterangan
-    </strong>
-  )}
-
-  {['Izin', 'Sakit', 'Pulang'].includes(detailSiswa.status) && (
-    <strong>
-      Demam dan flu
-    </strong>
-  )}
-</div>
-
-
-        <div className="detail-foto">
-  <p>Bukti Kehadiran</p>
-
-  {detailSiswa.status === 'Hadir' ? (
-    <div className="bukti-hadir">
-      <FaClipboardCheck />
-      <span>Hadir & tercatat di sistem</span>
-    </div>
-  ) : (
-    <div className="wrapper-foto">
-      <div className="foto-kosong"></div>
-    </div>
-  )}
-</div>
-
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
 
     </div>

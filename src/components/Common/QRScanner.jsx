@@ -30,13 +30,14 @@ export default function QRScanner({ onScan, onError, isActive }) {
             console.warn('QR scan error:', error);
         };
 
-        scanner.render(onScanSuccess, onScanFailure).catch((err) => {
+        try {
+            scanner.render(onScanSuccess, onScanFailure);
+            scannerRef.current = scanner;
+        } catch (err) {
             console.error('Failed to start scanner:', err);
             setHasCamera(false);
             onError?.('Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.');
-        });
-
-        scannerRef.current = scanner;
+        }
 
         return () => {
             if (scannerRef.current) {

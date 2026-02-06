@@ -4,6 +4,8 @@ import './DashboardGuru.css';
 import NavbarGuru from '../../components/Guru/NavbarGuru';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import CustomAlert from '../../components/Common/CustomAlert';
+import apiClient from '../../services/api';
+import DummyJadwal from '../../assets/images/DummyJadwal.png';
 
 function DashboardGuru() {
   const navigate = useNavigate();
@@ -13,6 +15,38 @@ function DashboardGuru() {
   const [qrVerified, setQrVerified] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const scannerRef = useRef(null);
+
+  // Schedule Image State
+  const [showJadwalModal, setShowJadwalModal] = useState(false);
+  const [jadwalImage, setJadwalImage] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+
+  useEffect(() => {
+    // Fetch User Profile & Schedule Image
+    const fetchUserProfile = async () => {
+      try {
+        const response = await apiClient.get('me');
+        const user = response.data;
+        setUserProfile(user);
+
+        // Check teacherProfile for schedule image
+        if (user.teacher_profile?.schedule_image_path || user.teacherProfile?.schedule_image_path) {
+          setJadwalImage(user.teacher_profile?.schedule_image_path || user.teacherProfile?.schedule_image_path);
+        } else {
+          // Fallback: Check homeroom dashboard if specific teacher schedule missing
+          try {
+            const hrResponse = await apiClient.get('me/homeroom/dashboard');
+            if (hrResponse.data?.schedule_image_path) {
+              setJadwalImage(hrResponse.data.schedule_image_path);
+            }
+          } catch (e) { /* Ignore */ }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
 
   // Custom Alert State
   const [alertState, setAlertState] = useState({
@@ -91,12 +125,34 @@ function DashboardGuru() {
     // console.warn(`Code scan error = ${ error } `);
   };
 
-  const allJadwal = [
-    { id: 1, mataPelajaran: 'Matematika', jamKe: '1-2', kelas: 'XII Mekatronika 2', waktu: '07:00-09:30' },
-    { id: 2, mataPelajaran: 'Matematika', jamKe: '3-4', kelas: 'XII Mekatronika 2', waktu: '07:00-09:30' },
-    { id: 3, mataPelajaran: 'Matematika', jamKe: '1-2', kelas: 'XII Mekatronika 1', waktu: '07:00-09:30' },
-    { id: 4, mataPelajaran: 'Matematika', jamKe: '3-4', kelas: 'XII Mekatronika 2', waktu: '07:00-09:30' },
-  ];
+  const [allJadwal, setAllJadwal] = useState([]);
+
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      try {
+        // Import dynamically to avoid circular dependency issues if any, or just standard import
+        const { getTeacherSchedules } = await import('../../services/attendance');
+        const today = new Date().toISOString().split('T')[0];
+        const schedules = await getTeacherSchedules({ date: today });
+
+        // Map API response to Component state format
+        const mapped = schedules.map(s => ({
+          id: s.id,
+          mataPelajaran: s.subject_name || s.title || 'Mata Pelajaran',
+          jamKe: s.jam_ke || '-', // Backend might return 'jam_ke' or start/end time
+          kelas: s.class?.name || 'Kelas',
+          classId: s.class_id,
+          waktu: `${s.start_time?.slice(0, 5) || ''} - ${s.end_time?.slice(0, 5) || ''}`,
+          originalData: s
+        }));
+        setAllJadwal(mapped);
+      } catch (e) {
+        console.error("Failed to fetch schedules", e);
+        // Fallback or empty
+      }
+    };
+    fetchSchedules();
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -142,7 +198,9 @@ function DashboardGuru() {
         jamKe: selectedSchedule?.jamKe,
         kelas: selectedSchedule?.kelas,
         waktu: selectedSchedule?.waktu,
-        tanggal: formattedDate
+        tanggal: formattedDate,
+        scheduleId: selectedSchedule?.id,
+        classId: selectedSchedule?.classId
       }
     });
   };
@@ -200,8 +258,8 @@ function DashboardGuru() {
               <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
             </svg>
           </div>
-          <h2 className="guru-profile-name">Alifah Diantebes Aindra</h2>
-          <p className="guru-profile-id">0123456789</p>
+          <h2 className="guru-profile-name">{userProfile?.name || 'Guru'}</h2>
+          <p className="guru-profile-id">{userProfile?.teacher_profile?.nip || userProfile?.teacherProfile?.nip || userProfile?.username || '-'}</p>
 
           <button className="guru-btn-logout" onClick={handleLogoutClick}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -228,8 +286,19 @@ function DashboardGuru() {
           </div>
 
           <div className="guru-current-time-card">
-            <div className="guru-total-label">Total Mengajar Hari Ini</div>
             <div className="guru-class-count">{allJadwal.length} Kelas</div>
+          </div>
+
+          <div
+            className="guru-current-time-card"
+            style={{ cursor: 'pointer', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+            onClick={() => setShowJadwalModal(true)}
+          >
+            <div className="guru-total-label">Jadwal Pelajaran</div>
+            <div className="guru-class-count" style={{ fontSize: '1.2rem', marginTop: '5px' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle', marginRight: '8px' }}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Lihat Jadwal
+            </div>
           </div>
         </div>
 
@@ -264,6 +333,26 @@ function DashboardGuru() {
           </div>
         </div>
       </main>
+
+      {/* Modal Jadwal Image */}
+      {showJadwalModal && (
+        <div className="guru-modal-overlay" onClick={() => setShowJadwalModal(false)}>
+          <div className="guru-modal-absen-scan" onClick={e => e.stopPropagation()} style={{ maxWidth: '800px', width: '90%' }}>
+            <div className="guru-modal-simple-header">
+              <h3>Jadwal Pelajaran</h3>
+              <button className="guru-close-btn" onClick={() => setShowJadwalModal(false)}>×</button>
+            </div>
+            <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
+              <img
+                src={jadwalImage ? `http://127.0.0.1:8001/storage/${jadwalImage}` : DummyJadwal}
+                alt="Jadwal Pelajaran"
+                style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: '8px' }}
+                onError={(e) => { e.target.src = DummyJadwal; }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL - Hanya Scan */}
       {selectedSchedule && (

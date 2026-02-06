@@ -8,9 +8,6 @@ import autoTable from 'jspdf-autotable';
 function DataGuru() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
-  const [editingTeacher, setEditingTeacher] = useState(null);
-  const exportButtonRef = useRef(null);
-  const fileInputRef = useRef(null);
 
   // Daftar mata pelajaran
   const mataPelajaranOptions = [
@@ -62,7 +59,44 @@ function DataGuru() {
   // Daftar jurusan
   const jurusanOptions = ['TKJ', 'RPL', 'MM', 'AKL', 'OTKP', 'BDP'];
 
-  // State form
+  // ✅ DATA DUMMY (DITAMBAHKAN SAJA)
+  const [teachers, setTeachers] = useState([
+    {
+      id: 1,
+      kodeGuru: 'GR001',
+      namaGuru: 'Ahmad Fauzi',
+      jabatan: 'Guru',
+      mataPelajaran: 'Matematika'
+    },
+    {
+      id: 2,
+      kodeGuru: 'GR002',
+      namaGuru: 'Siti Rahmawati',
+      jabatan: 'Waka',
+      bidangWaka: 'Waka Kurikulum'
+    },
+    {
+      id: 3,
+      kodeGuru: 'GR003',
+      namaGuru: 'Budi Santoso',
+      jabatan: 'Wali Kelas',
+      kelas: 'XII',
+      jurusan: 'RPL'
+    },
+    {
+      id: 4,
+      kodeGuru: 'GR004',
+      namaGuru: 'Diana Puspitasari',
+      jabatan: 'Kapro',
+      konsentrasiKeahlian: 'Rekayasa Perangkat Lunak'
+    },
+  ]);
+
+  const [editingTeacher, setEditingTeacher] = useState(null);
+  const fileInputRef = useRef(null);
+  const exportButtonRef = useRef(null);
+
+  // State untuk form modal
   const [formData, setFormData] = useState({
     kodeGuru: '',
     namaGuru: '',
@@ -71,54 +105,12 @@ function DataGuru() {
     bidangWaka: 'Waka Kurikulum',
     konsentrasiKeahlian: 'Teknik Komputer dan Jaringan',
     kelas: 'X',
-    jurusan: 'TKJ',
-    email: '',
-    password: '',
-    noTelp: ''
+    jurusan: 'TKJ'
   });
-
-  const [teachers, setTeachers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Import API dynamically
-  useEffect(() => {
-    const fetchTeachers = async () => {
-      try {
-        setLoading(true);
-        const { default: apiClient } = await import('../../services/api');
-        const { API_ENDPOINTS } = await import('../../utils/constants');
-
-        const response = await apiClient.get(API_ENDPOINTS.TEACHERS);
-        // Backend returns data in response.data.data because of pagination/resource
-        const teacherData = response.data.data || response.data;
-
-        const mappedTeachers = teacherData.map(t => ({
-          id: t.id,
-          kodeGuru: t.nip || t.code || '-',
-          namaGuru: t.name,
-          jabatan: t.homeroom_class ? 'Wali Kelas' : 'Guru', // Simple mapping
-          mataPelajaran: t.subject || '-',
-          kelas: t.homeroom_class?.name?.split(' ')?.[0] || '', // Parsing 'XII RPL 1' -> 'XII'
-          jurusan: t.homeroom_class?.major || '',
-          noTelp: t.phone,
-          originalData: t // Keep original for reference
-        }));
-
-        setTeachers(mappedTeachers);
-      } catch (error) {
-        console.error("Failed to fetch teachers:", error);
-        alert("Gagal mengambil data guru dari server.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTeachers();
-  }, []);
 
   const handleAddTeacher = (e) => {
     e.preventDefault();
-
+    
     // Validasi
     if (!formData.kodeGuru.trim()) {
       alert('Kode Guru harus diisi!');
@@ -157,48 +149,9 @@ function DataGuru() {
       teacherData.jurusan = formData.jurusan;
     }
 
-    // Buat object payload untuk API
-    const payload = {
-      name: formData.namaGuru,
-      nip: formData.kodeGuru,
-      email: formData.email || `${formData.kodeGuru}@school.id`, // Auto-generate if empty
-      password: formData.password || 'password123', // Default or from form
-      subject: formData.mataPelajaran,
-      phone: formData.noTelp,
-      // For Homeroom, backend expects homeroom_class_id, but here we might need to select it.
-      // For now, simple creation. Complex role assignment needs more logic/endpoints.
-    };
-
-    const submitData = async () => {
-      try {
-        const { default: apiClient } = await import('../../services/api');
-        const { API_ENDPOINTS } = await import('../../utils/constants');
-
-        if (editingTeacher) {
-          // Update
-          await apiClient.put(`${API_ENDPOINTS.TEACHERS}/${editingTeacher.id}`, payload);
-          alert('Data guru berhasil diperbarui!');
-        } else {
-          // Create
-          await apiClient.post(API_ENDPOINTS.TEACHERS, payload);
-          alert('Data guru berhasil ditambahkan!');
-        }
-
-        // Refresh data
-        window.location.reload();
-      } catch (error) {
-        console.error("Error saving teacher:", error);
-        alert(`Gagal menyimpan data: ${error.response?.data?.message || error.message}`);
-      }
-    };
-
-    submitData();
-    setIsModalOpen(false);
-    /* 
-    // OLD LOCAL LOGIC COMMENTED OUT
     if (editingTeacher) {
-      setTeachers(teachers.map(teacher =>
-        teacher.id === editingTeacher.id
+      setTeachers(teachers.map(teacher => 
+        teacher.id === editingTeacher.id 
           ? { ...teacher, ...teacherData }
           : teacher
       ));
@@ -212,8 +165,7 @@ function DataGuru() {
       setTeachers([...teachers, newTeacher]);
       alert('Data guru berhasil ditambahkan!');
     }
-    */
-
+    
     // Reset form
     setFormData({
       kodeGuru: '',
@@ -230,17 +182,17 @@ function DataGuru() {
 
   const handleEditTeacher = (teacher) => {
     setEditingTeacher(teacher);
-
+    
     // Untuk wali kelas, set kelas dan jurusan yang valid
     let kelasValue = teacher.kelas || 'X';
     let jurusanValue = teacher.jurusan || 'TKJ';
-
+    
     // Jika edit wali kelas, pastikan kombinasi kelas-jurusan tetap valid
     if (teacher.jabatan === 'Wali Kelas' && teacher.kelas && teacher.jurusan) {
       kelasValue = teacher.kelas;
       jurusanValue = teacher.jurusan;
     }
-
+    
     setFormData({
       kodeGuru: teacher.kodeGuru,
       namaGuru: teacher.namaGuru,
@@ -331,7 +283,7 @@ function DataGuru() {
       alert('Tidak ada data untuk diekspor!');
       return;
     }
-
+    
     const excelData = teachers.map((teacher, index) => {
       let data = {
         'No': index + 1,
@@ -382,11 +334,11 @@ function DataGuru() {
     }
 
     const doc = new jsPDF();
-
+    
     // Header
     doc.setFontSize(18);
     doc.text('Data Guru', 14, 22);
-
+    
     doc.setFontSize(10);
     doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, 14, 30);
 
@@ -519,15 +471,15 @@ function DataGuru() {
 
   // Icon Edit SVG
   const EditIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
     >
       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -537,15 +489,15 @@ function DataGuru() {
 
   // Icon Delete SVG
   const DeleteIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
     >
       <polyline points="3 6 5 6 21 6"></polyline>
@@ -557,15 +509,15 @@ function DataGuru() {
 
   // Icon Excel SVG
   const ExcelIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
       style={{ marginRight: '8px' }}
     >
@@ -579,15 +531,15 @@ function DataGuru() {
 
   // Icon PDF SVG
   const PDFIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
       style={{ marginRight: '8px' }}
     >
@@ -600,15 +552,15 @@ function DataGuru() {
 
   // Icon Download SVG
   const DownloadIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
       style={{ marginRight: '8px' }}
     >
@@ -627,8 +579,8 @@ function DataGuru() {
         <div className="filter-box">
           <input type="text" placeholder="Cari Guru..." className="search" />
           <div className="select-group">
-            <button
-              className="btn-tambah"
+            <button 
+              className="btn-tambah" 
               onClick={() => {
                 setEditingTeacher(null);
                 setIsModalOpen(true);
@@ -636,17 +588,17 @@ function DataGuru() {
             >
               Tambahkan
             </button>
-
+            
             {/* Tombol Ekspor dengan Dropdown */}
             <div style={{ position: 'relative', display: 'inline-block' }}>
-              <button
+              <button 
                 ref={exportButtonRef}
-                className="btn-export"
+                className="btn-export" 
                 onClick={() => setShowExportMenu(!showExportMenu)}
               >
                 Ekspor ▼
               </button>
-
+              
               {showExportMenu && (
                 <div style={{
                   position: 'absolute',
@@ -708,16 +660,16 @@ function DataGuru() {
               onChange={handleImportFromExcel}
               style={{ display: 'none' }}
             />
-            <button
-              className="btn-import"
+            <button 
+              className="btn-import" 
               onClick={() => fileInputRef.current?.click()}
             >
               Impor
             </button>
 
             {/* BUTTON DOWNLOAD FORMAT EXCEL */}
-            <button
-              className="btn-download-template"
+            <button 
+              className="btn-download-template" 
               onClick={handleDownloadTemplate}
             >
               <DownloadIcon /> Format Excel
@@ -757,15 +709,15 @@ function DataGuru() {
                   <td>{teacher.jabatan}</td>
                   <td>{detail}</td>
                   <td className="aksi-cell">
-                    <button
-                      className="aksi edit"
+                    <button 
+                      className="aksi edit" 
                       onClick={() => handleEditTeacher(teacher)}
                       title="Edit"
                     >
                       <EditIcon />
                     </button>
-                    <button
-                      className="aksi hapus"
+                    <button 
+                      className="aksi hapus" 
                       onClick={() => handleDeleteTeacher(teacher.id)}
                       title="Hapus"
                     >
@@ -812,28 +764,6 @@ function DataGuru() {
                   onChange={handleChange}
                   placeholder="Masukkan nama lengkap guru"
                   required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email || ''}
-                  onChange={handleChange}
-                  placeholder="email@sekolah.sch.id"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password || ''}
-                  onChange={handleChange}
-                  placeholder="Isi untuk ubah/buat password"
                 />
               </div>
 

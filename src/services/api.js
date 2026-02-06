@@ -41,7 +41,7 @@ apiClient.interceptors.response.use(
 
 // QR Code API Functions
 export const generateQRCode = async (scheduleId, duration = 30) => {
-    const response = await apiClient.post('/qrcodes/generate', {
+    const response = await apiClient.post('qrcodes/generate', {
         schedule_id: scheduleId,
         duration: duration
     });
@@ -49,14 +49,14 @@ export const generateQRCode = async (scheduleId, duration = 30) => {
 };
 
 export const scanQRCode = async (token) => {
-    const response = await apiClient.post('/attendance/scan', {
+    const response = await apiClient.post('attendance/scan', {
         qr_token: token
     });
     return response.data;
 };
 
 export const getActiveQRCodes = async () => {
-    const response = await apiClient.get('/qrcodes/active');
+    const response = await apiClient.get('qrcodes/active');
     return response.data;
 };
 

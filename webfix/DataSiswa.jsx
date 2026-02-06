@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -11,86 +11,63 @@ function DataSiswa() {
   const [showExportMenu, setShowExportMenu] = useState(false);
 
   // ✅ DATA DUMMY (DITAMBAHKAN, BUKAN DIUBAH FUNGSINYA)
-  const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch data from API
-  useEffect(() => {
-    const fetchStudents = async () => {
-      try {
-        setLoading(true);
-        const { default: apiClient } = await import('../../services/api');
-        const { API_ENDPOINTS } = await import('../../utils/constants');
-
-        const response = await apiClient.get(API_ENDPOINTS.STUDENTS);
-        const studentData = response.data.data || response.data;
-
-        const mappedStudents = studentData.map(s => ({
-          id: s.id,
-          nama: s.user?.name || '-',
-          nisn: s.nisn,
-          jurusan: s.class_room?.major || '-', // Assuming class has major
-          kelas: s.class_room?.name || '-',
-          originalData: s
-        }));
-
-        setStudents(mappedStudents);
-      } catch (error) {
-        console.error("Failed to fetch students:", error);
-        alert("Gagal mengambil data siswa dari server.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStudents();
-  }, []);
+  const [students, setStudents] = useState([
+    {
+      id: 1,
+      nama: 'Andi Pratama',
+      nisn: '1234567890',
+      jurusan: 'RPL',
+      kelas: 'XI',
+    },
+    {
+      id: 2,
+      nama: 'Siti Aulia',
+      nisn: '2345678901',
+      jurusan: 'DKV',
+      kelas: 'X',
+    },
+    {
+      id: 3,
+      nama: 'Budi Santoso',
+      nisn: '3456789012',
+      jurusan: 'TKJ',
+      kelas: 'XII',
+    },
+  ]);
 
   const [editData, setEditData] = useState(null);
   const fileInputRef = useRef(null);
   const exportButtonRef = useRef(null);
 
   // ADD / UPDATE DATA
-  const handleAddOrUpdate = async (formData) => {
-    try {
-      const { default: apiClient } = await import('../../services/api');
-      const { API_ENDPOINTS } = await import('../../utils/constants');
+  const handleAddOrUpdate = (formData) => {
+    if (editData) {
+      const updated = students.map((s) =>
+        s.id === editData.id
+          ? {
+              ...s,
+              nama: formData.namaSiswa,
+              nisn: formData.nisn,
+              jurusan: formData.jurusan,
+              kelas: formData.kelas,
+            }
+          : s
+      );
 
-      // Note: Backend expects specific structure for create/update.
-      // We need to map formData to backend payload.
-      // Also backend requires class_id, not just string "XI RPL". 
-      // For now, we might fail if we don't have real class IDs. 
-      // Assuming we need to just send what we have or mocked for now if class selection isn't fully robust.
-
-      // Simulating payload. In reality, we need class_id. 
-      // If the UI only provides text strings for class, we can't easily map without looking up class ID.
-      // Use a dummy class_id or try to find it?
-      // Let's assume input is simple for now.
-
-      const payload = {
-        name: formData.namaSiswa,
+      setStudents(updated);
+      setEditData(null);
+      alert("Data siswa berhasil diperbarui!");
+    } else {
+      const newStudent = {
+        id: Date.now(),
+        nama: formData.namaSiswa,
         nisn: formData.nisn,
-        nis: formData.nisn, // Using NISN as NIS for now if not provided
-        gender: 'L', // Default to L if not providing gender in form
-        address: '-',
-        class_id: 1, // HARDCODED for now, real implementation needs Class Selection
-        username: formData.nisn,
-        password: 'password123'
+        jurusan: formData.jurusan,
+        kelas: formData.kelas,
       };
 
-      if (editData) {
-        await apiClient.put(`${API_ENDPOINTS.STUDENTS}/${editData.id}`, payload);
-        alert("Data siswa berhasil diperbarui!");
-      } else {
-        await apiClient.post(API_ENDPOINTS.STUDENTS, payload);
-        alert("Data siswa berhasil ditambahkan!");
-      }
-
-      window.location.reload();
-
-    } catch (error) {
-      console.error("Error saving student:", error);
-      alert(`Gagal menyimpan: ${error.response?.data?.message || error.message}`);
+      setStudents([...students, newStudent]);
+      alert("Data siswa berhasil ditambahkan!");
     }
 
     setIsModalOpen(false);
@@ -179,11 +156,11 @@ function DataSiswa() {
     }
 
     const doc = new jsPDF();
-
+    
     // Header
     doc.setFontSize(18);
     doc.text('Data Siswa', 14, 22);
-
+    
     doc.setFontSize(10);
     doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, 14, 30);
 
@@ -239,53 +216,18 @@ function DataSiswa() {
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-        const existingNISNs = new Set(students.map(s => s.nisn));
-        const importedStudents = [];
-        let duplicateCount = 0;
+        const importedStudents = jsonData.map((row) => ({
+          id: Date.now() + Math.random(),
+          nama: row['Nama Siswa'] || row['Nama'] || '',
+          nisn: String(row['NISN'] || ''),
+          jurusan: row['Jurusan'] || '',
+          kelas: row['Kelas'] || '',
+        }));
 
-        jsonData.forEach((row, index) => {
-          const nama = row['Nama Siswa'] || row['Nama'] || '';
-          const nisn = String(row['NISN'] || '').trim();
-          const jurusan = row['Jurusan'] || '';
-          const kelas = row['Kelas'] || '';
-
-          if (!nama || !nisn || !jurusan || !kelas) {
-            console.warn(`Baris ${index + 2}: Data tidak lengkap, dilewati.`);
-            return;
-          }
-
-          if (existingNISNs.has(nisn)) {
-            duplicateCount++;
-            return;
-          }
-
-          importedStudents.push({
-            id: Date.now() + index + Math.random(),
-            nama,
-            nisn,
-            jurusan,
-            kelas,
-          });
-        });
-
-        if (importedStudents.length === 0) {
-          if (duplicateCount > 0) {
-            alert(`Tidak ada data baru untuk diimpor. (${duplicateCount} data duplikat ditemukan)`);
-          } else {
-            alert('File Excel kosong atau tidak memiliki data yang valid!');
-          }
-          return;
-        }
-
-        setStudents(prev => [...prev, ...importedStudents]);
-
-        let message = `Berhasil mengimpor ${importedStudents.length} data siswa baru!`;
-        if (duplicateCount > 0) {
-          message += ` (${duplicateCount} data duplikat dilewati)`;
-        }
-        alert(message);
+        setStudents([...students, ...importedStudents]);
+        alert(`Berhasil mengimpor ${importedStudents.length} data siswa!`);
       } catch (error) {
-        alert('Gagal membaca file Excel! ' + error.message);
+        alert('Gagal membaca file Excel. Pastikan format file benar.');
         console.error(error);
       }
     };
@@ -293,17 +235,17 @@ function DataSiswa() {
     event.target.value = '';
   };
 
-  // Move Icons outside to avoid re-creation on render
+  // Icon Edit SVG
   const EditIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
     >
       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -311,16 +253,17 @@ function DataSiswa() {
     </svg>
   );
 
+  // Icon Delete SVG
   const DeleteIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
     >
       <polyline points="3 6 5 6 21 6"></polyline>
@@ -330,16 +273,17 @@ function DataSiswa() {
     </svg>
   );
 
+  // Icon Excel SVG
   const ExcelIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
       style={{ marginRight: '8px' }}
     >
@@ -351,16 +295,17 @@ function DataSiswa() {
     </svg>
   );
 
+  // Icon PDF SVG
   const PDFIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
       style={{ marginRight: '8px' }}
     >
@@ -371,16 +316,17 @@ function DataSiswa() {
     </svg>
   );
 
+  // Icon Download SVG
   const DownloadIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
       strokeLinejoin="round"
       style={{ marginRight: '8px' }}
     >
@@ -433,14 +379,14 @@ function DataSiswa() {
 
             {/* Tombol Ekspor dengan Dropdown */}
             <div style={{ position: 'relative', display: 'inline-block' }}>
-              <button
+              <button 
                 ref={exportButtonRef}
-                className="btn-export"
+                className="btn-export" 
                 onClick={() => setShowExportMenu(!showExportMenu)}
               >
                 Ekspor ▼
               </button>
-
+              
               {showExportMenu && (
                 <div style={{
                   position: 'absolute',
@@ -541,15 +487,15 @@ function DataSiswa() {
                 <td>{student.jurusan}</td>
                 <td>{student.kelas}</td>
                 <td className="aksi-cell">
-                  <button
-                    className="aksi edit"
+                  <button 
+                    className="aksi edit" 
                     onClick={() => handleEditClick(student)}
                     title="Edit"
                   >
                     <EditIcon />
                   </button>
-                  <button
-                    className="aksi hapus"
+                  <button 
+                    className="aksi hapus" 
                     onClick={() => handleDeleteStudent(student.id)}
                     title="Hapus"
                   >
@@ -574,6 +520,5 @@ function DataSiswa() {
     </div>
   );
 }
-
 
 export default DataSiswa;

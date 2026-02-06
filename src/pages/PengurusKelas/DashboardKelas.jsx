@@ -3,44 +3,12 @@ import { Calendar, Clock, BookOpen, ArrowLeft, LogOut, TrendingUp, PieChart, Use
 import './DashboardKelas.css';
 import NavbarPengurus from "../../components/PengurusKelas/NavbarPengurus";
 import CustomAlert from '../../components/Common/CustomAlert';
-import jadwalImage from '../../assets/jadwal.png'; // GANTI PATH INI DENGAN PATH GAMBAR JADWAL ANDA
+import jadwalImage from '../../assets/jadwal.png';
 import QRGenerateButton from '../../components/PengurusKelas/QRGenerateButton';
+import { getMyAttendanceSummary } from '../../services/attendance';
 
-// Sample Data
-const sampleData = {
-  profile: {
-    name: '123',
-  },
-  // GANTI PATH INI DENGAN PATH GAMBAR JADWAL ANDA
-  // Contoh: scheduleImage: '/path/to/your/jadwal.png'
-  // atau import gambar: import jadwalImage from './assets/jadwal.png'
-  scheduleImage: jadwalImage, // Ganti dengan path gambar jadwal Anda
-  // Statistik Hari Ini - Kehadiran siswa hari ini (dari 30 siswa)
-  dailyStats: {
-    hadir: 25,
-    izin: 3,
-    sakit: 1,
-    alpha: 1
-  },
-  // Tren Bulanan - Total kehadiran kelas per bulan
-  // Contoh: 30 siswa x 20 hari = 600 total kehadiran per bulan
-  // hadir: jumlah kehadiran yang tercatat
-  // total: total kemungkinan kehadiran (jumlah siswa x hari efektif)
-  monthlyTrend: [
-    { month: 'Jan', percentage: 85, hadir: 38, total: 40 },
-    { month: 'Feb', percentage: 88, hadir: 38, total: 40 },
-    { month: 'Mar', percentage: 92, hadir: 37, total: 40 },
-    { month: 'Apr', percentage: 87, hadir: 36, total: 40 },
-    { month: 'Mei', percentage: 95, hadir: 39, total: 40 },
-    { month: 'Jun', percentage: 90, hadir: 34, total: 40 }
-  ],
-  // Sample schedules for QR generation
-  schedules: [
-    { id: 1, subject_name: 'Matematika', teacher_name: 'Pak Budi', start_time: '07:00', end_time: '08:30' },
-    { id: 2, subject_name: 'Bahasa Indonesia', teacher_name: 'Bu Siti', start_time: '08:30', end_time: '10:00' },
-    { id: 3, subject_name: 'Bahasa Inggris', teacher_name: 'Mr. John', start_time: '10:15', end_time: '11:45' }
-  ]
-};
+// Static data
+const scheduleImage = jadwalImage;
 
 // SubjectsModal - Menampilkan gambar jadwal yang sudah di-set
 const SubjectsModal = ({ isOpen, onClose, scheduleImage = null }) => {
@@ -95,6 +63,15 @@ const LineChart = ({ data }) => {
   const chartHeight = 240;
   const chartWidth = 600;
   const padding = { top: 30, right: 30, bottom: 40, left: 50 };
+
+  // Guard: return empty state if no data
+  if (!data || data.length === 0) {
+    return (
+      <div className="chart-container-box" style={{ width: '100%', height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p>Belum ada data kehadiran</p>
+      </div>
+    );
+  }
 
   const maxValue = Math.max(...data.map(d => d.percentage));
   const minValue = Math.min(...data.map(d => d.percentage));
@@ -360,7 +337,16 @@ const LineChart = ({ data }) => {
 };
 
 // Donut Chart Component - Diperbarui untuk statistik harian
+// Donut Chart Component
 const DonutChart = ({ data }) => {
+  // Guard: return empty state if no data
+  if (!data || typeof data !== 'object') {
+    return (
+      <div className="chart-container-box" style={{ width: '100%', height: '350px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p>Loading data...</p>
+      </div>
+    );
+  }
   const [hoveredSegment, setHoveredSegment] = useState(null);
   const total = Object.values(data).reduce((sum, val) => sum + val, 0);
 
@@ -662,6 +648,12 @@ const DashboardKelas = () => {
     action: null
   });
 
+  // API data states
+  const [profile, setProfile] = useState({ name: 'Loading...', kelas: '', id: '' });
+  const [dailyStats, setDailyStats] = useState({ hadir: 0, izin: 0, sakit: 0, alpha: 0 });
+  const [monthlyTrend, setMonthlyTrend] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentDateTime(new Date()), 1000);
     return () => clearInterval(timer);
@@ -758,9 +750,9 @@ const DashboardKelas = () => {
                 )}
               </div>
             </div>
-            <h1 className="profile-name">{sampleData.profile.name}</h1>
-            <h3 className="profile-kelas">{sampleData.profile.kelas}</h3>
-            <p className="profile-id">{sampleData.profile.id}</p>
+            <h1 className="profile-name">{profile.name}</h1>
+            <h3 className="profile-kelas">{profile.kelas}</h3>
+            <p className="profile-id">{profile.id}</p>
           </div>
 
           <button className="btn-logout" onClick={handleLogoutClick}>
@@ -850,7 +842,7 @@ const DashboardKelas = () => {
                       margin: 0
                     }}>Tren Kehadiran Bulanan</h3>
                   </div>
-                  <LineChart data={sampleData.monthlyTrend} />
+                  <LineChart data={monthlyTrend} />
                   <div style={{
                     marginTop: '20px',
                     padding: '16px',
@@ -904,7 +896,7 @@ const DashboardKelas = () => {
                   }}>
                     {/* Donut Chart di Kiri */}
                     <div style={{ flex: '0 0 auto' }}>
-                      <DonutChart data={sampleData.dailyStats} />
+                      <DonutChart data={dailyStats} />
                     </div>
 
                     {/* Legend di Kanan */}
@@ -915,10 +907,10 @@ const DashboardKelas = () => {
                       flex: '1'
                     }}>
                       {[
-                        { label: 'Hadir', value: sampleData.dailyStats.hadir, color: '#22c55e' },
-                        { label: 'Izin', value: sampleData.dailyStats.izin, color: '#eab308' },
-                        { label: 'Sakit', value: sampleData.dailyStats.sakit, color: '#8b5cf6' },
-                        { label: 'Alpha', value: sampleData.dailyStats.alpha, color: '#ef4444' }
+                        { label: 'Hadir', value: dailyStats.hadir, color: '#22c55e' },
+                        { label: 'Izin', value: dailyStats.izin, color: '#eab308' },
+                        { label: 'Sakit', value: dailyStats.sakit, color: '#8b5cf6' },
+                        { label: 'Alpha', value: dailyStats.alpha, color: '#ef4444' }
                       ].map((stat, idx) => (
                         <div key={idx} style={{
                           display: 'flex',
@@ -956,21 +948,21 @@ const DashboardKelas = () => {
         <SubjectsModal
           isOpen={showSubjects}
           onClose={() => setShowSubjects(false)}
-          scheduleImage={sampleData.scheduleImage}
+          scheduleImage={scheduleImage}
         />
 
         <ProfileModal
           isOpen={showProfile}
           onClose={() => setShowProfile(false)}
-          profile={sampleData.profile}
+          profile={profile}
           currentProfileImage={profileImage}
           onUpdateProfileImage={handleUpdateProfileImage}
           onLogout={handleLogoutClick}
           onShowAlert={onShowAlert}
         />
-        
+
         {/* QR Generate Button - Floating Action Button */}
-        <QRGenerateButton schedules={sampleData.schedules} />
+        <QRGenerateButton schedules={schedules} />
       </div>
     </>
   );

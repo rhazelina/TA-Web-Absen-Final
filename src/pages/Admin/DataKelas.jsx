@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './DataKelas.css';
 import NavbarAdmin from '../../components/Admin/NavbarAdmin';
 import TambahKelas from '../../components/Admin/TambahKelas';
 import CustomAlert from '../../components/Common/CustomAlert';
+import apiClient from '../../services/api';
+import DummyJadwal from '../../assets/images/DummyJadwal.png';
 
 function DataKelas() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   // Custom Alert State
   const [alertState, setAlertState] = useState({
@@ -42,75 +45,128 @@ function DataKelas() {
     closeAlert();
   };
 
-  // ✅ DATA DUMMY (DITAMBAHKAN SAJA)
-  const [kelas, setKelas] = useState([
-    {
-      id: 1,
-      namaKelas: 'X RPL 1',
-      jurusan: 'RPL',
-      kelas: 'X',
-      waliKelas: 'Budi Santoso'
-    },
-    {
-      id: 2,
-      namaKelas: 'XI TKJ 2',
-      jurusan: 'TKJ',
-      kelas: 'XI',
-      waliKelas: 'Siti Aminah'
-    },
-    {
-      id: 3,
-      namaKelas: 'XII DKV 1',
-      jurusan: 'DKV',
-      kelas: 'XII',
-      waliKelas: 'Ahmad Fauzi'
-    },
-    {
-      id: 4,
-      namaKelas: 'XI AV 1',
-      jurusan: 'AV',
-      kelas: 'XI',
-      waliKelas: 'Rina Handayani'
-    },
-    {
-      id: 5,
-      namaKelas: 'X MT 1',
-      jurusan: 'MT',
-      kelas: 'X',
-      waliKelas: 'Dewi Lestari'
-    }
-  ]);
+  // Data State
+  const [kelas, setKelas] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [editData, setEditData] = useState(null);
+  // Fetch Data
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const [majors, setMajors] = useState([]);
   const [searchKelas, setSearchKelas] = useState('');
   const [searchJurusan, setSearchJurusan] = useState('');
+  const [viewJadwalClass, setViewJadwalClass] = useState(null);
+
+  const handleUploadJadwal = async (classId, file) => {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('schedule_image', file);
+    formData.append('_method', 'PUT'); // If backend requires Method Spoofing for PUT with files
+
+    try {
+      await apiClient.post(`/classes/${classId}/schedule-image`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      showAlert('success', 'Berhasil', 'Jadwal berhasil diupload');
+      fetchData(); // Refresh data to see new image
+    } catch (error) {
+      console.error(error);
+      showAlert('error', 'Gagal', 'Gagal mengupload jadwal');
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [classRes, majorRes] = await Promise.all([
+        apiClient.get('classes'),
+        apiClient.get('majors')
+      ]);
+
+      const classes = classRes.data.data || classRes.data;
+      const majorsData = majorRes.data.data || majorRes.data;
+
+      setMajors(majorsData);
+
+      const formattedClasses = classes.map(cls => ({
+        id: cls.id,
+        namaKelas: cls.label, // UI uses Nama Kelas as Label
+        jurusan: cls.major?.name || cls.major_code || '-',
+        kelas: cls.grade,
+        waliKelas: cls.homeroom_teacher?.user?.name || cls.homeroom_teacher_name || '-',
+        jadwalImage: cls.schedule_image_path,
+        originalData: cls
+      }));
+
+      setKelas(formattedClasses);
+    } catch (error) {
+      console.error('Failed to fetch classes/majors:', error);
+      showAlert('error', 'Error', 'Gagal memuat data kelas');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ... (Upload Jadwal omitted, it's fine)
 
   // === TAMBAH BARU ===
-  const handleAddKelas = (formData) => {
-    const newKelas = {
-      id: Date.now(),
-      namaKelas: formData.namaKelas,
-      jurusan: formData.jurusan,
-      kelas: formData.kelas,
-      waliKelas: formData.waliKelas
-    };
+  const handleAddKelas = async (formData) => {
+    try {
+      setLoading(true);
+      // Map Jurusan Name to ID
+      // formData.jurusan likely comes as Name from TambahKelas component (or ID?)
+      // In TambahKelas.jsx, options value is typically NAME unless we change it.
+      // Let's assume Name for now as per current UI.
 
-    setKelas([...kelas, newKelas]);
-    setIsModalOpen(false);
-    showAlert('success', 'Berhasil', 'Data kelas berhasil ditambahkan!');
+      const selectedMajor = majors.find(m => m.name === formData.jurusan || m.code === formData.jurusan);
+      const majorId = selectedMajor ? selectedMajor.id : null;
+
+      const payload = {
+        grade: formData.kelas,
+        label: formData.namaKelas,
+        major_id: majorId
+      };
+
+      await apiClient.post('classes', payload);
+
+      showAlert('success', 'Berhasil', 'Data kelas berhasil ditambahkan!');
+      fetchData(); // Reload
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      showAlert('error', 'Gagal', 'Gagal menambahkan kelas');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // === EDIT DATA ===
-  const handleEditKelas = (formData) => {
-    setKelas(
-      kelas.map(k =>
-        k.id === formData.id ? formData : k
-      )
-    );
+  const handleEditKelas = async (formData) => {
+    try {
+      setLoading(true);
+      const selectedMajor = majors.find(m => m.name === formData.jurusan || m.code === formData.jurusan);
+      const majorId = selectedMajor ? selectedMajor.id : null;
 
-    setEditData(null);
-    setIsModalOpen(false);
-    showAlert('success', 'Berhasil', 'Data kelas berhasil diperbarui!');
+      const payload = {
+        grade: formData.kelas,
+        label: formData.namaKelas,
+        major_id: majorId
+      };
+
+      await apiClient.put(`classes/${formData.id}`, payload);
+
+      showAlert('success', 'Berhasil', 'Data kelas berhasil diperbarui!');
+      fetchData();
+      setIsModalOpen(false);
+      setEditData(null);
+    } catch (error) {
+      console.error(error);
+      showAlert('error', 'Gagal', 'Gagal memperbarui kelas');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // === HAPUS ===
@@ -189,6 +245,7 @@ function DataKelas() {
               <option value="XII">XII</option>
             </select>
 
+            {/*  VALUE YANG BELOM DI SELESAIKAN */}
             <label>Pilih Konsentrasi Keahlian :</label>
             <select value={searchJurusan} onChange={(e) => setSearchJurusan(e.target.value)}>
               <option value="">Konsentrasi Keahlian</option>
@@ -240,6 +297,14 @@ function DataKelas() {
                   <td>{k.waliKelas}</td>
                   <td className="aksi-cell">
                     <button
+                      className="aksi view-jadwal"
+                      onClick={() => setViewJadwalClass(k)}
+                      title="Lihat Jadwal"
+                      style={{ marginRight: '5px', backgroundColor: '#10b981', color: 'white' }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </button>
+                    <button
                       className="aksi edit"
                       onClick={() => {
                         setEditData(k);
@@ -273,6 +338,41 @@ function DataKelas() {
         onSubmit={editData ? handleEditKelas : handleAddKelas}
         editData={editData}
       />
+
+      {/* Jadwal Modal */}
+      {viewJadwalClass && (
+        <div className="modal-overlay" onClick={() => setViewJadwalClass(null)}>
+          <div className="modal-content jadwal-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Jadwal Kelas {viewJadwalClass.namaKelas}</h3>
+              <button className="close-btn" onClick={() => setViewJadwalClass(null)}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="jadwal-preview">
+                <img
+                  src={viewJadwalClass.jadwalImage
+                    ? `http://127.0.0.1:8001/storage/${viewJadwalClass.jadwalImage}`
+                    : DummyJadwal}
+                  alt="Jadwal Kelas"
+                  onError={(e) => { e.target.src = DummyJadwal; }}
+                />
+              </div>
+              <div className="upload-section">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleUploadJadwal(viewJadwalClass.id, e.target.files[0])}
+                  style={{ display: 'none' }}
+                  id="jadwal-upload"
+                />
+                <label htmlFor="jadwal-upload" className="btn-upload">
+                  Upload Jadwal Baru
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

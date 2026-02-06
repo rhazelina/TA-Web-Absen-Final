@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './DataJurusan.css';
 import NavbarAdmin from '../../components/Admin/NavbarAdmin';
 import TambahJurusan from '../../components/Admin/TambahJurusan';
@@ -32,70 +32,90 @@ function DataJurusan() {
     setAlertState(prev => ({ ...prev, show: false }));
   };
 
-  const handleConfirmAction = () => {
+  const handleConfirmAction = async () => {
     if (alertState.action === 'delete_jurusan') {
       const id = alertState.data;
-      setJurusans(jurusans.filter(jurusan => jurusan.id !== id));
-      showAlert('success', 'Berhasil', 'Data jurusan berhasil dihapus!');
+      try {
+        const { default: apiClient } = await import('../../services/api');
+        await apiClient.delete(`majors/${id}`);
+        setJurusans(jurusans.filter(jurusan => jurusan.id !== id));
+        showAlert('success', 'Berhasil', 'Data jurusan berhasil dihapus!');
+      } catch (error) {
+        console.error("Failed to delete:", error);
+        showAlert('error', 'Gagal', 'Gagal menghapus jurusan');
+      }
       return;
     }
     closeAlert();
   };
 
-  // ✅ DATA DUMMY (DITAMBAHKAN SAJA)
-  const [jurusans, setJurusans] = useState([
-    {
-      id: 1,
-      kodeJurusan: 'RPL',
-      namaJurusan: 'Rekayasa Perangkat Lunak'
-    },
-    {
-      id: 2,
-      kodeJurusan: 'TKJ',
-      namaJurusan: 'Teknik Komputer dan Jaringan'
-    },
-    {
-      id: 3,
-      kodeJurusan: 'DKV',
-      namaJurusan: 'Desain Komunikasi Visual'
-    },
-    {
-      id: 4,
-      kodeJurusan: 'AV',
-      namaJurusan: 'Audio Video'
-    },
-    {
-      id: 5,
-      kodeJurusan: 'MT',
-      namaJurusan: 'Mekatronika'
+  // Data State
+  const [jurusans, setJurusans] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch Data
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const { default: apiClient } = await import('../../services/api');
+      const response = await apiClient.get('majors');
+      const data = response.data.data || response.data;
+
+      const mappedData = data.map(m => ({
+        id: m.id,
+        kodeJurusan: m.code,
+        namaJurusan: m.name
+      }));
+      setJurusans(mappedData);
+    } catch (error) {
+      console.error("Failed to fetch majors:", error);
+      showAlert('error', 'Error', 'Gagal mengambil data jurusan');
+    } finally {
+      setIsLoading(false);
     }
-  ]);
+  };
 
   const [editData, setEditData] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // === TAMBAH BARU ===
-  const handleAddJurusan = (formData) => {
-    const newJurusan = {
-      id: Date.now(),
-      namaJurusan: formData.namaJurusan,
-      kodeJurusan: formData.kodeJurusan
-    };
-    setJurusans([...jurusans, newJurusan]);
+  const handleAddJurusan = async (formData) => {
+    try {
+      const { default: apiClient } = await import('../../services/api');
+      await apiClient.post('majors', {
+        name: formData.namaJurusan,
+        code: formData.kodeJurusan
+      });
+      showAlert('success', 'Berhasil', 'Data jurusan berhasil ditambahkan!');
+      fetchData();
+    } catch (error) {
+      console.error("Failed to add:", error);
+      showAlert('error', 'Gagal', 'Gagal menambahkan jurusan');
+    }
     setIsModalOpen(false);
-    showAlert('success', 'Berhasil', 'Data jurusan berhasil ditambahkan!');
   };
 
   // === EDIT DATA ===
-  const handleEditJurusan = (formData) => {
-    setJurusans(
-      jurusans.map(j =>
-        j.id === formData.id ? formData : j
-      )
-    );
-    setEditData(null);
+  // === EDIT DATA ===
+  const handleEditJurusan = async (formData) => {
+    try {
+      const { default: apiClient } = await import('../../services/api');
+      await apiClient.put(`majors/${formData.id}`, {
+        name: formData.namaJurusan,
+        code: formData.kodeJurusan
+      });
+      showAlert('success', 'Berhasil', 'Data jurusan berhasil diperbarui!');
+      fetchData();
+      setEditData(null);
+    } catch (error) {
+      console.error("Failed to update:", error);
+      showAlert('error', 'Gagal', 'Gagal memperbarui jurusan');
+    }
     setIsModalOpen(false);
-    showAlert('success', 'Berhasil', 'Data jurusan berhasil diperbarui!');
   };
 
   // === HAPUS ===

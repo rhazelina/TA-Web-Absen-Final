@@ -53,7 +53,7 @@ function KehadiranGuruShow() {
 
   const handleEditClick = (item) => {
     setSelectedItem(item);
-    setSelectedStatus(item.status || "Tidak Mengajar");
+    setSelectedStatus(item.status || "Tidak Ada Jam Mengajar");
     setShowEditModal(true);
   };
 
@@ -115,7 +115,7 @@ function KehadiranGuruShow() {
                   const displayStatus =
                     item.status && item.status !== ""
                       ? item.status
-                      : "Tidak Mengajar";
+                      : "Tidak Ada Jam Mengajar";
 
                   return (
                     <tr key={item.id}>
@@ -186,7 +186,7 @@ function KehadiranGuruShow() {
                     <option value="Sakit">Sakit</option>
                     <option value="Alpha">Alpha</option>
                     <option value="Pulang">Pulang</option>
-                    <option value="Tidak Mengajar">Tidak Mengajar</option>
+                    <option value="Tidak Ada Jam Mengajar">Tidak Ada Jam Mengajar</option>
                   </select>
                   <FaChevronDown className="ikon-select-modal" />
                 </div>

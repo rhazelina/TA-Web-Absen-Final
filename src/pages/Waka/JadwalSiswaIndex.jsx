@@ -9,6 +9,7 @@ import {
   FaBriefcase,
   FaDoorOpen,
 } from "react-icons/fa";
+import apiClient from '../../services/api';
 
 function JadwalSiswaIndex() {
   const [dataSiswa, setDataSiswa] = useState([]);
@@ -26,61 +27,28 @@ function JadwalSiswaIndex() {
 
   const kelasOptions = ['X RPL 1', 'X RPL 2', 'XI RPL 1'];
 
-  // DATA DUMMY
-  const dummyData = [
-    {
-      id: 'dummy-1',
-      kompetensi_keahlian: 'RPL',
-      wali_kelas: 'Budi Santoso, S.Pd',
-      kelas: 'X RPL 1'
-    },
-    {
-      id: 'dummy-2',
-      kompetensi_keahlian: 'RPL',
-      wali_kelas: 'Siti Aminah, S.Kom',
-      kelas: 'X RPL 2'
-    },
-    {
-      id: 'dummy-3',
-      kompetensi_keahlian: 'TKJ',
-      wali_kelas: 'Ahmad Dahlan, S.T',
-      kelas: 'X TKJ 1'
-    },
-    {
-      id: 'dummy-4',
-      kompetensi_keahlian: 'DKV',
-      wali_kelas: 'Dewi Lestari, S.Sn',
-      kelas: 'X DKV 1'
-    },
-    {
-      id: 'dummy-5',
-      kompetensi_keahlian: 'RPL',
-      wali_kelas: 'Eko Prasetyo, S.Pd',
-      kelas: 'XI RPL 1'
-    }
-  ];
-
   useEffect(() => {
-    const items = [];
+    const fetchData = async () => {
+      try {
+        const response = await apiClient.get('classes');
+        const classes = response.data.data || response.data; // Handle pagination or list
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
+        const formattedData = classes.map(cls => ({
+          id: cls.id,
+          kompetensi_keahlian: cls.major?.code || cls.major_code || '-',
+          wali_kelas: cls.homeroom_teacher?.user?.name || cls.homeroom_teacher_name || 'Belum ada',
+          kelas: cls.name
+        }));
 
-      if (key.startsWith('jadwal-siswa-')) {
-        const data = JSON.parse(localStorage.getItem(key));
-        items.push({
-          id: data.id,
-          kompetensi_keahlian: data.kompetensi_keahlian,
-          wali_kelas: data.wali_kelas,
-          kelas: data.kelas
-        });
+        setDataSiswa(formattedData);
+        setFilteredData(formattedData);
+      } catch (error) {
+        console.error('Failed to fetch classes:', error);
+        // Fallback to empty or handled in UI
       }
-    }
+    };
 
-    // Gabungkan data dari localStorage dengan data dummy
-    const allData = [...items, ...dummyData];
-    setDataSiswa(allData);
-    setFilteredData(allData);
+    fetchData();
   }, []);
 
   useEffect(() => {

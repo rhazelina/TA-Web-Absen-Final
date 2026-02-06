@@ -14,7 +14,6 @@ function Presensi() {
   const mataPelajaran = state.mataPelajaran || '';
   const jamKe = state.jamKe || '';
   const kelas = state.kelas || '';
-  const waktu = state.waktu || '';
   const tanggal = state.tanggal || '';
 
   const [mode, setMode] = useState('input');
