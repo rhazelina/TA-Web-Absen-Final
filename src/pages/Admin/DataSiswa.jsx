@@ -10,40 +10,50 @@ function DataSiswa() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
 
-  // ✅ DATA DUMMY (DITAMBAHKAN, BUKAN DIUBAH FUNGSINYA)
   const [students, setStudents] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch data from API
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         const { default: apiClient } = await import('../../services/api');
         const { API_ENDPOINTS } = await import('../../utils/constants');
 
-        const response = await apiClient.get(API_ENDPOINTS.STUDENTS);
-        const studentData = response.data.data || response.data;
+        // Parallel fetch for students and classes
+        const [studentsRes, classesRes] = await Promise.all([
+          apiClient.get(API_ENDPOINTS.STUDENTS),
+          apiClient.get('classes') // Assuming endpoint is 'classes'
+        ]);
+
+        const studentData = studentsRes.data.data || studentsRes.data;
+        const classData = classesRes.data.data || classesRes.data;
+
+        setClasses(classData);
 
         const mappedStudents = studentData.map(s => ({
           id: s.id,
-          nama: s.user?.name || '-',
+          nama: s.user?.name || s.name || '-',
           nisn: s.nisn,
-          jurusan: s.class_room?.major || '-', // Assuming class has major
-          kelas: s.class_room?.name || '-',
+          jurusan: s.class_room?.major || s.class?.major || '-',
+          kelas: s.class_room?.name || s.class?.name || (classData.find(c => c.id === s.class_id)?.name) || '-',
+          classId: s.class_id,
           originalData: s
         }));
 
         setStudents(mappedStudents);
       } catch (error) {
-        console.error("Failed to fetch students:", error);
-        alert("Gagal mengambil data siswa dari server.");
+        console.error("Failed to fetch data:", error);
+        // alert("Gagal mengambil data dari server."); 
+        // Silent error or fallback
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStudents();
+    fetchData();
   }, []);
 
   const [editData, setEditData] = useState(null);
@@ -56,24 +66,13 @@ function DataSiswa() {
       const { default: apiClient } = await import('../../services/api');
       const { API_ENDPOINTS } = await import('../../utils/constants');
 
-      // Note: Backend expects specific structure for create/update.
-      // We need to map formData to backend payload.
-      // Also backend requires class_id, not just string "XI RPL". 
-      // For now, we might fail if we don't have real class IDs. 
-      // Assuming we need to just send what we have or mocked for now if class selection isn't fully robust.
-
-      // Simulating payload. In reality, we need class_id. 
-      // If the UI only provides text strings for class, we can't easily map without looking up class ID.
-      // Use a dummy class_id or try to find it?
-      // Let's assume input is simple for now.
-
       const payload = {
         name: formData.namaSiswa,
         nisn: formData.nisn,
-        nis: formData.nisn, // Using NISN as NIS for now if not provided
-        gender: 'L', // Default to L if not providing gender in form
+        nis: formData.nisn,
+        gender: 'L', // Default to L
         address: '-',
-        class_id: 1, // HARDCODED for now, real implementation needs Class Selection
+        class_id: formData.classId, // Dynamic Class ID
         username: formData.nisn,
         password: 'password123'
       };
@@ -97,16 +96,28 @@ function DataSiswa() {
   };
 
   // DELETE DATA
-  const handleDeleteStudent = (id) => {
+  const handleDeleteStudent = async (id) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) {
-      setStudents(students.filter(student => student.id !== id));
-      alert('Data siswa berhasil dihapus!');
+      try {
+        const { default: apiClient } = await import('../../services/api');
+        const { API_ENDPOINTS } = await import('../../utils/constants');
+
+        await apiClient.delete(`${API_ENDPOINTS.STUDENTS}/${id}`);
+        setStudents(students.filter(student => student.id !== id));
+        alert('Data siswa berhasil dihapus!');
+      } catch (error) {
+        console.error("Delete failed", error);
+        alert("Gagal menghapus data");
+      }
     }
   };
 
   // CLICK EDIT
   const handleEditClick = (student) => {
-    setEditData(student);
+    setEditData({
+      ...student,
+      classId: student.classId || (classes.find(c => c.name === student.kelas)?.id)
+    });
     setIsModalOpen(true);
   };
 
@@ -404,6 +415,8 @@ function DataSiswa() {
             <select>
               <option>Konsentrasi Keahlian</option>
               <option>RPL</option>
+              {/* Keep hardcoded options for filter for now, or populate dynamic? 
+                  Focus is on Adding Student. Filter can be updated later or kept simple. */}
               <option>TKJ</option>
               <option>DKV</option>
               <option>AV</option>
@@ -570,10 +583,10 @@ function DataSiswa() {
         }}
         onSubmit={handleAddOrUpdate}
         editData={editData}
+        classes={classes}
       />
     </div>
   );
 }
-
 
 export default DataSiswa;

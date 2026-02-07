@@ -5,29 +5,96 @@ import './Dashboard.css';
 function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  /* =====================
-     DATA DUMMY STATISTIK
-  ===================== */
-  const [stats] = useState({
-    totalMurid: 864,
-    totalGuru: 52,
-    totalKelas: 24,
-    totalJurusan: 6
+  const [stats, setStats] = useState({
+    totalMurid: 0,
+    totalGuru: 0,
+    totalKelas: 0,
+    totalJurusan: 0
   });
 
-  const [attendanceData] = useState({
-    tepatWaktu: 720,
-    terlambat: 48,
-    izin: 32,
-    sakit: 18,
-    alpha: 6
+  const [attendanceData, setAttendanceData] = useState({
+    tepatWaktu: 0,
+    terlambat: 0,
+    izin: 0,
+    sakit: 0,
+    alpha: 0
   });
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const { default: apiClient } = await import('../../services/api');
+        const { API_ENDPOINTS } = await import('../../utils/constants');
+
+        // Fetch Admin Summary
+        // If endpoint doesn't exist, we might need to fetch individual lists, 
+        // but assuming admin/summary is or will be implemented for this view.
+        // Fallback to individual fetches if summary fails or is empty?
+
+        try {
+          const response = await apiClient.get(API_ENDPOINTS.ADMIN_SUMMARY);
+          const data = response.data.data || response.data;
+
+          if (data) {
+            setStats({
+              totalMurid: data.total_students || 0,
+              totalGuru: data.total_teachers || 0,
+              totalKelas: data.total_classes || 0,
+              totalJurusan: data.total_majors || 6 // Fallback if not provided
+            });
+
+            if (data.attendance_stats) {
+              setAttendanceData({
+                tepatWaktu: data.attendance_stats.present || 0,
+                terlambat: data.attendance_stats.late || 0,
+                izin: data.attendance_stats.excused || 0,
+                sakit: data.attendance_stats.sick || 0,
+                alpha: data.attendance_stats.absent || 0
+              });
+            }
+          }
+        } catch (e) {
+          // Fallback: Fetch counts manually if summary endpoint missing
+          console.warn("Summary endpoint failed, fetching manually...", e);
+
+          const [studentsRes, teachersRes, classesRes] = await Promise.all([
+            apiClient.get(API_ENDPOINTS.STUDENTS),
+            apiClient.get(API_ENDPOINTS.TEACHERS),
+            apiClient.get('classes')
+          ]);
+
+          const sCount = (studentsRes.data.data || studentsRes.data).length;
+          const tCount = (teachersRes.data.data || teachersRes.data).length;
+          const cList = (classesRes.data.data || classesRes.data);
+          const cCount = cList.length;
+          const jCount = new Set(cList.map(c => c.major)).size;
+
+          setStats({
+            totalMurid: sCount,
+            totalGuru: tCount,
+            totalKelas: cCount,
+            totalJurusan: jCount
+          });
+        }
+
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const formatDate = (date) => {
@@ -61,32 +128,32 @@ function Dashboard() {
         <div className="stats-cards-grid">
           <div className="stat-card-item card-blue">
             <div className="stat-dots">⋮</div>
-            <div className="stat-number">{stats.totalMurid}</div>
+            <div className="stat-number">{loading ? '...' : stats.totalMurid}</div>
             <div className="stat-label">Total Murid</div>
           </div>
 
           <div className="stat-card-item card-orange">
             <div className="stat-dots">⋮</div>
-            <div className="stat-number">{stats.totalGuru}</div>
+            <div className="stat-number">{loading ? '...' : stats.totalGuru}</div>
             <div className="stat-label">Total Guru</div>
           </div>
 
           <div className="stat-card-item card-cyan">
             <div className="stat-dots">⋮</div>
-            <div className="stat-number">{stats.totalKelas}</div>
+            <div className="stat-number">{loading ? '...' : stats.totalKelas}</div>
             <div className="stat-label">Total Rombel</div>
           </div>
 
           <div className="stat-card-item card-gray">
             <div className="stat-dots">⋮</div>
-            <div className="stat-number">{stats.totalJurusan}</div>
+            <div className="stat-number">{loading ? '...' : stats.totalJurusan}</div>
             <div className="stat-label">Total Konsentrasi Keahlian</div>
           </div>
         </div>
 
         {/* RIWAYAT KEHADIRAN */}
         <div className="attendance-wrapper">
-          <h2 className="attendance-title">Riwayat Kehadiran</h2>
+          <h2 className="attendance-title">Riwayat Kehadiran (Hari Ini)</h2>
 
           <div className="attendance-grid">
             <div className="attendance-left">

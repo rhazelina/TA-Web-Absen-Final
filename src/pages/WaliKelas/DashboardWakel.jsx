@@ -64,6 +64,7 @@ const DashboardWakel = () => {
             id: s.id,
             mataPelajaran: s.subject_name,
             kelas: s.class_name,
+            classId: s.class_id,
             jamKe: s.time_slot,
             waktu: `${s.start_time} - ${s.end_time}`
           }));
@@ -117,6 +118,8 @@ const DashboardWakel = () => {
       kelas: selectedSchedule.kelas,
       waktu: selectedSchedule.waktu,
       tanggal: formatDate(currentTime),
+      scheduleId: selectedSchedule.id,
+      classId: selectedSchedule.classId
     };
 
     console.log('📦 Data yang akan dikirim:', dataToSend);

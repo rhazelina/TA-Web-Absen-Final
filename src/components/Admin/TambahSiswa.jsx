@@ -2,28 +2,36 @@
 import React, { useState, useEffect } from 'react';
 import './TambahSiswa.css';
 
-function Tambah({ isOpen, onClose, onSubmit, editData }) {
+function Tambah({ isOpen, onClose, onSubmit, editData, classes = [] }) {
   const [formData, setFormData] = useState({
     namaSiswa: '',
     nisn: '',
     jurusan: '',
-    kelas: ''
+    kelas: '',
+    classId: null // Added classId
   });
 
-  // Data jurusan dan kelas yang sesuai
-  const jurusanKelasData = {
-    'RPL': ['X RPL 1', 'X RPL 2', 'XI RPL 1', 'XI RPL 2', 'XII RPL 1', 'XII RPL 2'],
-    'TKJ': ['X TKJ 1', 'X TKJ 2', 'XI TKJ 1', 'XI TKJ 2', 'XII TKJ 1', 'XII TKJ 2'],
-    'DKV': ['X DKV 1', 'X DKV 2', 'XI DKV 1', 'XI DKV 2', 'XII DKV 1', 'XII DKV 2'],
-    'AV': ['X AV 1', 'X AV 2', 'XI AV 1', 'XI AV 2', 'XII AV 1', 'XII AV 2'],
-    'MT': ['X MT 1', 'X MT 2', 'XI MT 1', 'XI MT 2', 'XII MT 1', 'XII MT 2'],
-    'BC': ['X BC 1', 'X BC 2', 'XI BC 1', 'XI BC 2', 'XII BC 1', 'XII BC 2'],
-    'AN': ['X AN 1', 'X AN 2', 'XI AN 1', 'XI AN 2', 'XII AN 1', 'XII AN 2'],
-    'EI': ['X EI 1', 'X EI 2', 'XI EI 1', 'XI EI 2', 'XII EI 1', 'XII EI 2']
-  };
+  // Derived state from classes prop
+  const [availableMajors, setAvailableMajors] = useState([]);
+  const [availableClasses, setAvailableClasses] = useState([]);
 
-  // Dapatkan daftar kelas berdasarkan jurusan yang dipilih
-  const availableKelas = formData.jurusan ? jurusanKelasData[formData.jurusan] : [];
+  useEffect(() => {
+    // Extract unique majors
+    if (classes.length > 0) {
+      const majors = [...new Set(classes.map(c => c.major).filter(Boolean))];
+      setAvailableMajors(majors.sort());
+    }
+  }, [classes]);
+
+  useEffect(() => {
+    // Filter classes based on selected major
+    if (formData.jurusan) {
+      const filtered = classes.filter(c => c.major === formData.jurusan);
+      setAvailableClasses(filtered);
+    } else {
+      setAvailableClasses([]);
+    }
+  }, [formData.jurusan, classes]);
 
   // Auto isi saat edit
   useEffect(() => {
@@ -32,23 +40,36 @@ function Tambah({ isOpen, onClose, onSubmit, editData }) {
         namaSiswa: editData.nama,
         nisn: editData.nisn,
         jurusan: editData.jurusan,
-        kelas: editData.kelas
+        kelas: editData.kelas,
+        classId: editData.classId
       });
     } else {
-      setFormData({ namaSiswa: '', nisn: '', jurusan: '', kelas: '' });
+      setFormData({ namaSiswa: '', nisn: '', jurusan: '', kelas: '', classId: null });
     }
   }, [editData, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Jika yang diubah adalah jurusan, reset pilihan kelas
     if (name === 'jurusan') {
       setFormData({
         ...formData,
         jurusan: value,
-        kelas: '' // Reset kelas ketika jurusan berubah
+        kelas: '', // Reset kelas ketika jurusan berubah
+        classId: null
       });
+    } else if (name === 'kelas') {
+      const selectedClass = classes.find(c => c.id === parseInt(value) || c.name === value);
+      // If value is ID (from select option value), use it. 
+      // We will make select option value = class.id
+
+      setFormData({
+        ...formData,
+        kelas: selectedClass ? selectedClass.name : '',
+        classId: value // Assumption: value is class ID
+      });
+
     } else {
       setFormData({
         ...formData,
@@ -60,7 +81,7 @@ function Tambah({ isOpen, onClose, onSubmit, editData }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);   // kirim data balik ke DataSiswa.jsx
-    setFormData({ namaSiswa: '', nisn: '', jurusan: '', kelas: '' });
+    setFormData({ namaSiswa: '', nisn: '', jurusan: '', kelas: '', classId: null });
   };
 
   if (!isOpen) return null;
@@ -71,7 +92,7 @@ function Tambah({ isOpen, onClose, onSubmit, editData }) {
         <h2 className="modal-title">
           {editData ? "Ubah Data Siswa" : "Tambah Siswa"}
         </h2>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label>Nama Siswa</label>
@@ -109,14 +130,18 @@ function Tambah({ isOpen, onClose, onSubmit, editData }) {
               required
             >
               <option value="">Pilih Konsentrasi Keahlian...</option>
-              <option value="RPL">RPL</option>
-              <option value="TKJ">TKJ</option>
-              <option value="DKV">DKV</option>
-              <option value="AV">AV</option>
-              <option value="MT">MT</option>
-              <option value="BC">BC</option>
-              <option value="AN">AN</option>
-              <option value="EI">EI</option>
+              {availableMajors.length > 0 ? (
+                availableMajors.map(major => (
+                  <option key={major} value={major}>{major}</option>
+                ))
+              ) : (
+                // Fallback if no classes loaded or empty majors
+                <>
+                  <option value="RPL">RPL</option>
+                  <option value="TKJ">TKJ</option>
+                  <option value="DKV">DKV</option>
+                </>
+              )}
             </select>
           </div>
 
@@ -124,7 +149,7 @@ function Tambah({ isOpen, onClose, onSubmit, editData }) {
             <label>Kelas</label>
             <select
               name="kelas"
-              value={formData.kelas}
+              value={formData.classId || ''} // Use classId as value
               onChange={handleChange}
               disabled={!formData.jurusan}
               required
@@ -132,9 +157,9 @@ function Tambah({ isOpen, onClose, onSubmit, editData }) {
               <option value="">
                 {formData.jurusan ? 'Pilih Kelas...' : 'Pilih Konsentrasi Keahlian Terlebih Dahulu'}
               </option>
-              {availableKelas.map((kelas, index) => (
-                <option key={index} value={kelas}>
-                  {kelas}
+              {availableClasses.map((kelas) => (
+                <option key={kelas.id} value={kelas.id}>
+                  {kelas.name}
                 </option>
               ))}
             </select>
