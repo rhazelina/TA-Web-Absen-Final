@@ -344,7 +344,7 @@ function DashboardGuru() {
             </div>
             <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
               <img
-                src={jadwalImage ? `http://127.0.0.1:8001/storage/${jadwalImage}` : DummyJadwal}
+                src={jadwalImage ? `http://127.0.0.1:8000/storage/${jadwalImage}` : DummyJadwal}
                 alt="Jadwal Pelajaran"
                 style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: '8px' }}
                 onError={(e) => { e.target.src = DummyJadwal; }}

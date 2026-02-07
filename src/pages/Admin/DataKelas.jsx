@@ -351,7 +351,7 @@ function DataKelas() {
               <div className="jadwal-preview">
                 <img
                   src={viewJadwalClass.jadwalImage
-                    ? `http://127.0.0.1:8001/storage/${viewJadwalClass.jadwalImage}`
+                    ? `http://127.0.0.1:8000/storage/${viewJadwalClass.jadwalImage}`
                     : DummyJadwal}
                   alt="Jadwal Kelas"
                   onError={(e) => { e.target.src = DummyJadwal; }}
