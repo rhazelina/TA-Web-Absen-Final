@@ -200,7 +200,7 @@
   align-items: center;
 }
 
-.table-header > div {
+.table-header>div {
   text-align: center;
 }
 
@@ -250,15 +250,15 @@
 }
 
 .status-terlambat {
-  background: #FF5F1A;
+  background: #FFA500;
 }
 
 .status-izin {
-  background: #EDD329;
+  background: #ACA40D;
 }
 
 .status-sakit {
-  background: #9A0898;
+  background: #520C8F;
 }
 
 .status-alpha {
@@ -266,7 +266,7 @@
 }
 
 .status-pulang {
-  background: #243CB5;
+  background: #2F85EB;
 }
 
 /* Updated View Button - No background, just icon */
@@ -671,6 +671,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -681,6 +682,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

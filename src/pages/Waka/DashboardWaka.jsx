@@ -34,43 +34,86 @@ export default function DashboardWaka() {
     return () => clearInterval(t);
   }, []);
 
-  const statistik = {
-    hadir: 120,
-    izin: 15,
-    sakit: 10,
-    alpha: 5,
-    pulang: 8,
+  const [statistik, setStatistik] = useState({
+    hadir: 0,
+    izin: 0,
+    sakit: 0,
+    alpha: 0,
+    pulang: 0,
+  });
+
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: []
+  });
+
+  const fetchData = async () => {
+    try {
+      // Dynamic import to avoid circular dependencies if any, though direct import is fine here
+      // const { default: apiClient } = await import('../../services/api');
+      // Using global apiClient import at top would be better, but let's stick to pattern
+      const { default: apiClient } = await import("../../services/api");
+
+      const response = await apiClient.get('waka/dashboard/summary');
+      const { statistik: stats, trend } = response.data;
+
+      setStatistik(stats);
+
+      // Process trend data for chart
+      const labels = trend.map(t => t.label);
+      const hadirData = trend.map(t => t.hadir);
+      const izinData = trend.map(t => t.izin);
+      const sakitData = trend.map(t => t.sakit);
+      const alphaData = trend.map(t => t.alpha);
+      const pulangData = trend.map(t => t.terlambat); // Using terlambat for pulang column for now based on backend map
+
+      setChartData({
+        labels,
+        datasets: [
+          {
+            label: "Hadir",
+            data: hadirData,
+            backgroundColor: "#1FA83D",
+          },
+          {
+            label: "Izin",
+            data: izinData,
+            backgroundColor: "#d8bf1a",
+          },
+          {
+            label: "Sakit",
+            data: sakitData,
+            backgroundColor: "#9A0898",
+          },
+          {
+            label: "Alpha",
+            data: alphaData,
+            backgroundColor: "#D90000",
+          },
+          {
+            label: "Terlambat",
+            data: pulangData,
+            backgroundColor: "#FF5F1A",
+          },
+        ],
+      });
+
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    }
   };
 
-  const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
-    datasets: [
-      {
-        label: "Hadir",
-        data: [30, 35, 28, 27, 26, 29, 31, 30, 28, 27, 26, 25],
-        backgroundColor: "#1FA83D",
-      },
-      {
-        label: "Izin",
-        data: [5, 4, 3, 3, 4, 3, 2, 3, 4, 3, 2, 2],
-        backgroundColor: "#d8bf1a",
-      },
-      {
-        label: "Sakit",
-        data: [4, 3, 2, 1, 2, 2, 3, 2, 1, 2, 1, 1],
-        backgroundColor: "#9A0898",
-      },
-      {
-        label: "Alpha",
-        data: [2, 1, 2, 0, 1, 1, 0, 1, 2, 1, 0, 1],
-        backgroundColor: "#D90000",
-      },
-      {
-        label: "Pulang",
-        data: [3, 2, 1, 2, 3, 2, 2, 3, 2, 1, 2, 1],
-        backgroundColor: "#FF5F1A",
-      },
-    ],
+  useEffect(() => {
+    fetchData();
+    // Refresh every minute
+    const interval = setInterval(fetchData, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const data = chartData.labels.length > 0 ? chartData : {
+    // Fallback/Loading state
+    labels: ["Loading..."],
+    datasets: [{ label: "Loading", data: [0], backgroundColor: "#ccc" }]
   };
 
   const tanggal = now.toLocaleDateString("id-ID", {
@@ -143,7 +186,7 @@ export default function DashboardWaka() {
               <Mini title="Izin" value={statistik.izin} cls="izin" />
               <Mini title="Sakit" value={statistik.sakit} cls="sakit" />
               <Mini title="Alpha" value={statistik.alpha} cls="alpha" />
-              <Mini title="Pulang" value={statistik.pulang} cls="pulang" />
+              <Mini title="Terlambat" value={statistik.terlambat} cls="pulang" />
             </div>
           </div>
 

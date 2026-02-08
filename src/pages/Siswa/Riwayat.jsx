@@ -36,7 +36,7 @@ function Riwayat() {
     try {
       setLoading(true);
       const { default: attendanceService } = await import('../../services/attendance');
-      const { STATUS_BACKEND_TO_FRONTEND, STATUS_COLORS } = await import('../../utils/statusMapping');
+      const { STATUS_COLORS_HEX } = await import('../../utils/statusMapping');
 
       // Use getMyAttendance endpoint
       // It supports 'from' and 'to' query params

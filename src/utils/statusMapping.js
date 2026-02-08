@@ -36,3 +36,21 @@ export const STATUS_COLORS = {
     dinas: 'status-dinas',
     izin: 'status-izin'
 };
+
+export const STATUS_COLORS_HEX = {
+    present: '#1FA83D',
+    late: '#FFA500',
+    excused: '#ACA40D',
+    sick: '#520C8F',
+    absent: '#D90000',
+    dinas: '#0000FF',
+    izin: '#ACA40D',
+    // Indonesian keys for local components that might need them
+    hadir: '#1FA83D',
+    terlambat: '#FFA500',
+    izin: '#ACA40D',
+    sakit: '#520C8F',
+    alpha: '#D90000',
+    dinas: '#0000FF',
+    pulang: '#2F85EB'
+};

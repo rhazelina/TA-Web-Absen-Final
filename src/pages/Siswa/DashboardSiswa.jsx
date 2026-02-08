@@ -1,11 +1,13 @@
+// DashboardSiswa.jsx
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, BookOpen, ArrowLeft, LogOut, PieChart, TrendingUp, User, Camera } from 'lucide-react';
 import './DashboardSiswa.css';
 import NavbarSiswa from '../../components/Siswa/NavbarSiswa';
 import CustomAlert from '../../components/Common/CustomAlert';
-import jadwalImage from '../../assets/jadwal.png'; // IMPORT GAMBAR JADWAL
+import jadwalImage from '../../assets/jadwal.png';
 import QRScanButton from '../../components/Siswa/QRScanButton';
 import { getMyAttendanceSummary } from '../../services/attendance';
+import { STATUS_COLORS_HEX } from '../../utils/statusMapping';
 
 // Static data for schedule image
 const scheduleImage = jadwalImage;
@@ -318,10 +320,10 @@ const DonutChart = ({ data = {} }) => {
   };
 
   const colors = {
-    hadir: '#22c55e',
-    izin: '#eab308',
-    sakit: '#8b5cf6',
-    alpha: '#ef4444'
+    hadir: STATUS_COLORS_HEX.hadir || '#1FA83D',
+    izin: STATUS_COLORS_HEX.izin || '#ACA40D',
+    sakit: STATUS_COLORS_HEX.sakit || '#520C8F',
+    alpha: STATUS_COLORS_HEX.alpha || '#D90000'
   };
 
   const labels = {
