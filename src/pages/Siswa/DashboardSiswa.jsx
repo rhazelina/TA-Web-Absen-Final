@@ -9,11 +9,11 @@ import QRScanButton from '../../components/Siswa/QRScanButton';
 import { getMyAttendanceSummary } from '../../services/attendance';
 import { STATUS_COLORS_HEX } from '../../utils/statusMapping';
 
-// Static data for schedule image
-const scheduleImage = jadwalImage;
+// Static data for schedule image removed
+// const scheduleImage = jadwalImage;
 
 // Subjects Modal - Menampilkan gambar jadwal
-const SubjectsModal = ({ isOpen, onClose, scheduleImage = null }) => {
+const SubjectsModal = ({ isOpen, onClose, scheduleImage }) => {
   if (!isOpen) return null;
 
   return (
@@ -664,6 +664,31 @@ const Dashboard = () => {
     };
 
     fetchAttendanceSummary();
+  }, []);
+
+  // Fetch schedule image
+  const [scheduleImage, setScheduleImage] = useState(null);
+
+  useEffect(() => {
+    const fetchScheduleImage = async () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (userData.class_id) {
+          const { getClassScheduleImage } = await import('../../services/attendance');
+          const imageUrl = await getClassScheduleImage(userData.class_id);
+          setScheduleImage(imageUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching schedule image:", error);
+      }
+    };
+
+    fetchScheduleImage();
+
+    // Cleanup blob URL
+    return () => {
+      if (scheduleImage) URL.revokeObjectURL(scheduleImage);
+    };
   }, []);
 
   const formatDate = () => {

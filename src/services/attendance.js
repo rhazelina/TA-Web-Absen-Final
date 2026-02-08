@@ -69,5 +69,15 @@ export default {
     getHomeroomDashboard,
     createManualAttendance,
     getTeacherSchedules,
-    getAttendanceBySchedule
+    getAttendanceBySchedule,
+    getClassSchedules: async (classId) => {
+        const response = await apiClient.get(`classes/${classId}/schedules`);
+        return response.data;
+    },
+    getClassScheduleImage: async (classId) => {
+        const response = await apiClient.get(`classes/${classId}/schedule-image`, {
+            responseType: 'blob'
+        });
+        return URL.createObjectURL(response.data);
+    }
 };

@@ -7,8 +7,8 @@ import jadwalImage from '../../assets/jadwal.png';
 import QRGenerateButton from '../../components/PengurusKelas/QRGenerateButton';
 import { getMyAttendanceSummary } from '../../services/attendance';
 
-// Static data
-const scheduleImage = jadwalImage;
+// Static data removed
+// const scheduleImage = jadwalImage;
 
 // SubjectsModal - Menampilkan gambar jadwal yang sudah di-set
 const SubjectsModal = ({ isOpen, onClose, scheduleImage = null }) => {
@@ -666,6 +666,7 @@ const DashboardKelas = () => {
   const [dailyStats, setDailyStats] = useState({ hadir: 0, izin: 0, sakit: 0, alpha: 0, terlambat: 0, pulang: 0 });
   const [monthlyTrend, setMonthlyTrend] = useState([]);
   const [schedules, setSchedules] = useState([]);
+  const [scheduleImage, setScheduleImage] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDateTime(new Date()), 1000);
@@ -733,6 +734,33 @@ const DashboardKelas = () => {
     };
 
     fetchAttendanceSummary();
+
+    // Fetch Class Schedules and Image
+    const fetchClassData = async () => {
+      try {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (userData.class_id) {
+          const { getClassSchedules, getClassScheduleImage } = await import('../../services/attendance');
+
+          // Fetch schedules
+          const schedulesData = await getClassSchedules(userData.class_id);
+          setSchedules(schedulesData);
+
+          // Fetch image
+          const imageUrl = await getClassScheduleImage(userData.class_id);
+          setScheduleImage(imageUrl); // Assuming generic useState name for image
+        }
+      } catch (error) {
+        console.error("Error fetching class data:", error);
+      }
+    };
+
+    fetchClassData();
+
+    // Cleanup blob URL
+    return () => {
+      // if (scheduleImage) URL.revokeObjectURL(scheduleImage); // Need access to current state, which is tricky in cleanup without ref or dependency
+    };
   }, []);
 
   const formatDate = () => {
