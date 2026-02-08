@@ -40,7 +40,7 @@
   top: 75px;
   width: 280px;
   height: calc(100vh - 75px);
-  background: var(--bg-sidebar);
+  background: #001F3E;
   padding: var(--spacing-xl) var(--spacing-md);
   text-align: center;
   color: white;

@@ -85,26 +85,28 @@ const RiwayatKelas = () => {
             />
           </div>
 
-          <div className="stats-summary">
-            <div className="stat-card hadir">
-              <span>Hadir</span>
-              <strong>{stats.Hadir}</strong>
-            </div>
-            <div className="stat-card sakit">
-              <span>Sakit</span>
-              <strong>{stats.Sakit}</strong>
-            </div>
-            <div className="stat-card izin">
-              <span>Izin</span>
-              <strong>{stats.Izin}</strong>
-            </div>
-            <div className="stat-card alpha">
-              <span>Alpha</span>
-              <strong>{stats.Alpha}</strong>
-            </div>
-            <div className="stat-card terlambat">
-              <span>Terlambat</span>
-              <strong>{stats.Terlambat}</strong>
+          <div className="pengurus-stats-wrapper">
+            <div className="pengurus-stats-grid">
+              <div className="pengurus-stat-box box-hadir">
+                <div className="pengurus-stat-title">Hadir</div>
+                <div className="pengurus-stat-number">{stats.Hadir}</div>
+              </div>
+              <div className="pengurus-stat-box box-sakit">
+                <div className="pengurus-stat-title">Sakit</div>
+                <div className="pengurus-stat-number">{stats.Sakit}</div>
+              </div>
+              <div className="pengurus-stat-box box-izin">
+                <div className="pengurus-stat-title">Izin</div>
+                <div className="pengurus-stat-number">{stats.Izin}</div>
+              </div>
+              <div className="pengurus-stat-box box-alpha">
+                <div className="pengurus-stat-title">Alpha</div>
+                <div className="pengurus-stat-number">{stats.Alpha}</div>
+              </div>
+              <div className="pengurus-stat-box box-terlambat">
+                <div className="pengurus-stat-title">Terlambat</div>
+                <div className="pengurus-stat-number">{stats.Terlambat}</div>
+              </div>
             </div>
           </div>
         </div>
